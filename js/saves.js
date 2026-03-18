@@ -88,10 +88,46 @@ function getPlayerData() {
 
         mastery_tier: 0,
         mastery_essence: E(0),
-        luck_essence: E(0),
+        mastery_stone: E(0),
+        mastery_clover: E(0),
+        
+        super_tier: 0,
+        super_essence: E(0),
+        
+        hyper_tier: 0,
+        hyper_essence: E(0),
 
-        ascension_energy: E(0),
+        reb: E(0),
+        
+        currentChall: -1,
+        chall: new Array(12).fill(E(0)),
+
+        ap: E(0),
         aTimes: 0,
+
+        luck_essence: E(0), // Keeping existing field if any
+
+        weather: [],
+
+        runes: {
+            unl: false,
+            packs: {
+                pp: { lvl: E(0), progress: E(0), opening: false },
+                tp: { lvl: E(0), progress: E(0), opening: false },
+                rp: { lvl: E(0), progress: E(0), opening: false },
+            },
+            upgs: {
+                speed: E(0),
+                bulk: E(0),
+                clone: E(0),
+                luck: E(0),
+            },
+            items: {
+                pp_add: E(0), pp_mult: E(1), pp_exp: E(1),
+                tp_add: E(0), tp_mult: E(1), tp_exp: E(1),
+                rp_add: E(0), rp_mult: E(1), rp_exp: E(1),
+            }
+        },
     }
     for (let id in UPGRADES) s.upgrade[id] = new Array(UPGRADES[id].ctn.length).fill(E(0))
     return s
@@ -111,7 +147,22 @@ function loadPlayer(load) {
     const DATA = getPlayerData()
     player = deepNaN(load, DATA)
     player = deepUndefinedAndDecimal(player, DATA)
+    player = deepNegative(player, DATA)
     convertStringToDecimal()
+}
+
+function deepNegative(obj, data) {
+    for (let k in obj) {
+        if (obj[k] == null || obj[k] == undefined) continue
+        if (obj[k] instanceof Decimal) {
+            if (obj[k].lt(0)) obj[k] = (data && data[k]) ? data[k] : E(0)
+        } else if (typeof obj[k] == 'number') {
+            if (obj[k] < 0) obj[k] = (data && data[k]) ? data[k] : 0
+        } else if (typeof obj[k] == 'object' && obj[k] != null && !Array.isArray(obj[k])) {
+            obj[k] = deepNegative(obj[k], data ? data[k] : null)
+        }
+    }
+    return obj
 }
 
 function deepNaN(obj, data) {
