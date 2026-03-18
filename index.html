@@ -1,70 +1,188 @@
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <meta name="description" content="Luck Incremental made by MrRedShark77" />
-
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://mrredshark77.github.io/Luck-Incremental/" />
+    <meta name="description" content="Luck Incremental - Celestial Revamp" />
     <meta property="og:title" content="Luck Incremental" />
-    <meta property="og:description" content="Luck Incremental made by MrRedShark77." />
-    <meta property="og:image" content="https://mrredshark77.github.io/Luck-Incremental//icon.png" />
-
     <link rel="icon" href="icon.png">
-
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style_extra.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="js/break_eternity.js"></script>
     <script src="js/elements.js"></script>
     <script src="js/saves.js"></script>
     <script src="js/format.js"></script>
     <script src="js/temp.js"></script>
     <script src="js/calc.js"></script>
-
     <script src="js/upgs.js"></script>
     <script src="js/luck.js"></script>
-
     <script src="js/tab.js"></script>
     <script src="js/main.js"></script>
-
-    <link rel="stylesheet" href="style.css">
-
     <title>Luck Incremental</title>
 </head>
 <body onload="loadGame()">
-    <input id="copy" style="position: absolute; top: 0; left: 0; user-select: all; visibility: hidden;">
-    <div id="app" style="display: none;">
-        <div id="rolled_div"></div>
-        <div id="luck_mult">Your luck multiplier: ???</div>
+    <input id="copy" style="position:absolute;top:0;left:0;user-select:all;visibility:hidden;">
 
-        <div id="tab_div0">
-            <button class="pres_btn" id="pres_btn" onclick="MAIN.prestige.reset()">???</button>
-            <div class="upgrades_div" id="pp_upgrades_table"></div><br>
-            <button class="pres_btn" id="tran_btn" onclick="MAIN.trans.reset()">???</button>
-            <div class="upgrades_div" id="tp_upgrades_table"></div><br>
-            <button class="pres_btn" id="rein_btn" onclick="MAIN.rein.reset()">???</button>
-            <div class="upgrades_div" id="rp_upgrades_table"></div><br>
-        </div><div id="tab_div1">
-            <button class="pres_btn" id="mastery_btn" onclick="MAIN.mastery.reset()">???</button>
-            <div id="mastery_tier">Your Mastery Tier is <h3>0</h3>, which boosts luck by <h3>^1.00</h3> and generates <h3>0.00</h3> Mastery Essence every second.</div>
-            <div class="upgrades_div" id="es_upgrades_table"></div><br>
+    <div id="app" style="display: none;">
+
+        <!-- =========== SIDEBAR =========== -->
+        <div id="sidebar">
+            <!-- Logo -->
+            <div id="sidebar_logo">
+                <div class="logo-main">⚡ LUCK</div>
+                <div class="logo-sub">INCREMENTAL</div>
+            </div>
+
+            <!-- Navigation Tabs (injected by tab.js) -->
+            <div id="sidebar_tabs_area"></div>
+
+            <!-- Bottom: version -->
+            <div id="version">Celestial Revamp v0.3</div>
         </div>
 
-        <div style="height: 200px;"></div>
-        <div id="bottom_div" style="position: fixed; bottom: 0px; width: calc(100% - 60px);">
-            <button id="roll_btn" onclick="roll()">Roll</button>
-            <button onclick="show_luck_nav = !show_luck_nav">Show/Hide Rarity List</button>
-            <button onclick="save()">Save</button>
+        <!-- =========== MAIN CONTENT =========== -->
+        <div id="main_content">
 
-            <div id="luck_list">
-                <div id="luck_ctn0"></div>
-                <div id="luck_ctn1"></div>
-                <div id="luck_ctn2"></div>
-                <div id="luck_ctn3"></div>
+            <!-- Roll Result Banner -->
+            <div id="rolled_div">
+                <div id="rolled_label">
+                    <div class="roll-waiting">Roll the dice to begin...</div>
+                </div>
+            </div>
+
+            <!-- Luck Multiplier -->
+            <div id="luck_mult">Your luck multiplier: ???</div>
+
+            <!-- ===== TAB PANES ===== -->
+
+            <!-- Tab 0: Prestige / Trans / Rein -->
+            <div id="tab_div0" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label pp-label">⚗️ PRESTIGE</div>
+                    <button class="pres_btn pres_pp" id="pres_btn" onclick="MAIN.prestige.reset()">???</button>
+                    <div class="upgrades_div" id="pp_upgrades_table"></div>
+                </div>
+
+                <div class="layer-divider"></div>
+
+                <div class="layer-section">
+                    <div class="layer-label tp-label">🌀 TRANSCENSION</div>
+                    <button class="pres_btn pres_tp" id="tran_btn" onclick="MAIN.trans.reset()">???</button>
+                    <div class="upgrades_div" id="tp_upgrades_table"></div>
+                </div>
+
+                <div class="layer-divider"></div>
+
+                <div class="layer-section">
+                    <div class="layer-label rp-label">♾️ REINCARNATION</div>
+                    <button class="pres_btn pres_rp" id="rein_btn" onclick="MAIN.rein.reset()">???</button>
+                    <div class="upgrades_div" id="rp_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 1: Mastery -->
+            <div id="tab_div1" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label me-label">✨ MASTERY</div>
+                    <button class="pres_btn pres_me" id="mastery_btn" onclick="MAIN.mastery.reset()">???</button>
+                    <div id="mastery_tier" class="info-card">
+                        Your Mastery Tier is <h3>0</h3>, which boosts luck by <h3>^1.00</h3> and generates <h3>0.00</h3> Mastery Essence every second.
+                    </div>
+                    <div class="upgrades_div" id="es_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 2: Luck Essence -->
+            <div id="tab_div2" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label le-label">💠 LUCK ESSENCE</div>
+                    <div id="luck_essence_display" class="info-card">
+                        Reach <b>Mastery Tier 5</b> to unlock Luck Essence.
+                    </div>
+                    <div class="upgrades_div" id="le_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Celestial Sphere -->
+            <div id="tab_div3" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label ce-label">🌌 CELESTIAL SPHERE</div>
+                    <div id="celestial_display" class="info-card">
+                        This layer unlocks at <b>Mastery Tier 100</b>.
+                    </div>
+                    <div class="upgrades_div" id="ce_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Ascension -->
+            <div id="tab_div4" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label as-label">🎇 ASCENSION</div>
+                    <button class="pres_btn pres_as" id="ascension_btn" onclick="MAIN.ascension.reset()" style="background-color: #6a0dad; color: white;">???</button>
+                    <div class="upgrades_div" id="as_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Settings -->
+            <div id="tab_div5" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label">⚙️ SETTINGS</div>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3 style="margin-bottom:12px;">Save & Load</h3>
+                            <div class="settings-btn-group">
+                                <button class="settings-btn" onclick="save()">💾 Save Game</button>
+                                <button class="settings-btn" onclick="exporty()">📤 Export Save</button>
+                                <button class="settings-btn" onclick="export_copy()">📋 Copy Save</button>
+                                <button class="settings-btn danger-btn" onclick="importy()">📥 Import Save</button>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3 style="margin-bottom:12px;">Danger Zone</h3>
+                            <div class="settings-btn-group">
+                                <button class="settings-btn danger-btn" onclick="if(confirm('Hard reset? THIS CANNOT BE UNDONE!')) wipe(true)">💀 Hard Reset</button>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3 style="margin-bottom:12px;">About</h3>
+                            <p style="color:var(--text-secondary);font-size:13px;line-height:1.8;">
+                                Original game by MrRedShark77<br>
+                                Celestial Revamp — UI &amp; new content<br>
+                                Version: Celestial Revamp v0.3
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="height:180px;"></div>
+        </div>
+
+        <!-- =========== RARITY PANEL (right side) =========== -->
+        <div id="luck_list">
+            <div class="panel-title">📊 RARITY LIST</div>
+            <div id="luck_ctn0" class="rarity-entry best-entry"></div>
+            <div id="luck_ctn1" class="rarity-entry"></div>
+            <div id="luck_ctn2" class="rarity-entry"></div>
+            <div id="luck_ctn3" class="rarity-entry"></div>
+            <div id="luck_ctn4" class="rarity-entry"></div>
+            <div id="luck_ctn5" class="rarity-entry"></div>
+            <div id="luck_ctn6" class="rarity-entry"></div>
+            <div id="luck_ctn7" class="rarity-entry"></div>
+        </div>
+
+        <!-- =========== ROLL ACTION OVERLAY =========== -->
+        <div id="bottom_div">
+            <button id="roll_btn" onclick="roll()">⚡ ROLL</button>
+            <div class="roll-sub-actions">
+                <button class="sub-btn" onclick="show_luck_nav = !show_luck_nav">☰ Rarity List</button>
             </div>
         </div>
-        <div id="tabs"></div>
-        <div id="version">Version v0.2 Patch 1 (14.06.23)</div>
+
     </div>
 </body>
 </html>

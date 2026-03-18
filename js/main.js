@@ -206,7 +206,7 @@ el.update.main = ()=>{
         )
     }
 
-    if (tab == 5 && tmp.el.ascension_btn) {
+    if (tab == 4 && tmp.el.ascension_btn) {
         tmp.el.ascension_btn.setClasses({locked: player.max_rarity.lt(100000), pres_btn: true})
 
         tmp.el.ascension_btn.setHTML(`
