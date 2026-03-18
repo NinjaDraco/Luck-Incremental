@@ -88,7 +88,9 @@ const MAIN = {
         req() {
             let x = 750 + 600 * player.mastery_tier
 
-            return x
+            x = E(x).mul(upgradeEffect('as', 1)).toNumber()
+
+            return Math.floor(x)
         },
         reset() {
             if (player.max_rarity.gte(tmp.mTierReq)) {

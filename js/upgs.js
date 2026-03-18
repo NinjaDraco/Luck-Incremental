@@ -272,6 +272,47 @@ const UPGRADES = {
             },
         ],
     },
+    as: {
+        tab: 4,
+        res: ["Ascension Energy",()=>[player,'ascension_energy'],"Ascension Energy"],
+        unl: ()=>player.aTimes>0,
+
+        ctn: [
+            {
+                desc: () => `Increase luck by ${formatMult(upgradeEffect('as',0)[0])} every level.`,
+                cost: i => Decimal.pow(2,i).mul(10),
+                bulk: i => i.div(10).log(2),
+
+                effect(i) {
+                    let b = E(1e10)
+                    let x = b.pow(i)
+
+                    return [b,x]
+                },
+                effDesc: x => formatMult(x[1]),
+            },{
+                desc: () => `Reduce Mastery Tier requirement scaling.`,
+                cost: i => Decimal.pow(3,i).mul(100),
+                bulk: i => i.div(100).log(3),
+
+                effect(i) {
+                    let x = Decimal.pow(0.95, i)
+                    return x
+                },
+                effDesc: x => "-"+formatPercent(E(1).sub(x)),
+            },{
+                desc: () => `Automatically gain a percentage of reset currencies per second.`,
+                cost: i => Decimal.pow(5,i).mul(1000),
+                bulk: i => i.div(1000).log(5),
+
+                effect(i) {
+                    let x = i.mul(0.1)
+                    return x
+                },
+                effDesc: x => "+"+formatPercent(x)+"/s",
+            },
+        ],
+    },
 }
 
 const UPG_START_COST = (()=>{

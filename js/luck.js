@@ -2,7 +2,7 @@ const LUCK = {
     mult() {
         let x = E(1)
 
-        x = x.mul(upgradeEffect('pp',0)[1]).mul(upgradeEffect('tp',0)[1]).mul(upgradeEffect('rp',0)[1]).mul(upgradeEffect('es',0)[1])
+        x = x.mul(upgradeEffect('pp',0)[1]).mul(upgradeEffect('tp',0)[1]).mul(upgradeEffect('rp',0)[1]).mul(upgradeEffect('es',0)[1]).mul(upgradeEffect('as',0)[1])
 
         x = x.pow(tmp.mTierEff.luck||1)
 
@@ -71,10 +71,21 @@ function roll() {
 
     player.max_rarity = player.max_rarity.max(r)
 
-    tmp.el.rolled_div.setHTML(`
-    You rolled:<br>
-    <h1>${getRarityName(r)}</h1>
-    `)
+    // Grant Luck Essence for rolls exceeding 100σ
+    if (r.gte(100) && player.luck_essence !== undefined) {
+        let leBonus = r.sub(99).log10().add(1).mul(player.mastery_tier > 0 ? player.mastery_tier : 1)
+        player.luck_essence = player.luck_essence.add(leBonus)
+    }
+
+    // Update the inner label in the new HTML
+    if (tmp.el.rolled_label) {
+        tmp.el.rolled_label.setHTML(`
+        <div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px">YOU ROLLED</div>
+        <div class="roll-result-name" style="color:var(--accent);">${getRarityName(r)}</div>
+        `)
+    } else {
+        tmp.el.rolled_div.setHTML(`You rolled:<br><h1>${getRarityName(r)}</h1>`)
+    }
 
     player.roll_time = 0
 }
@@ -93,7 +104,7 @@ el.update.luck = () => {
 
     tmp.el.luck_list.setDisplay(show_luck_nav)
 
-    if (show_luck_nav) for (let i = 0; i < 4; i++) {
+    if (show_luck_nav) for (let i = 0; i < 8; i++) {
         let m = mr.add(i)
 
         let lc = tmp.el['luck_ctn'+i]
