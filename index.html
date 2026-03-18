@@ -17,10 +17,13 @@
     <script src="js/saves.js"></script>
     <script src="js/format.js"></script>
     <script src="js/temp.js"></script>
-    <script src="js/calc.js"></script>
     <script src="js/upgs.js"></script>
     <script src="js/luck.js"></script>
+    <script src="js/chall.js"></script>
+    <script src="js/weather.js"></script>
+    <script src="js/calc.js"></script>
     <script src="js/tab.js"></script>
+    <script src="js/runes.js"></script>
     <script src="js/main.js"></script>
     <title>Luck Incremental</title>
 </head>
@@ -41,11 +44,12 @@
             <div id="sidebar_tabs_area"></div>
 
             <!-- Bottom: version -->
-            <div id="version">Celestial Revamp v0.3</div>
+            <div id="version">Expanded Edition v1.0</div>
         </div>
 
         <!-- =========== MAIN CONTENT =========== -->
         <div id="main_content">
+            <div id="weather_display"></div>
 
             <!-- Roll Result Banner -->
             <div id="rolled_div">
@@ -59,7 +63,7 @@
 
             <!-- ===== TAB PANES ===== -->
 
-            <!-- Tab 0: Prestige / Trans / Rein -->
+            <!-- Tab 0: Main (Prestige -> Rebirth) -->
             <div id="tab_div0" class="tab-pane">
                 <div class="layer-section">
                     <div class="layer-label pp-label">⚗️ PRESTIGE</div>
@@ -82,6 +86,22 @@
                     <button class="pres_btn pres_rp" id="rein_btn" onclick="MAIN.rein.reset()">???</button>
                     <div class="upgrades_div" id="rp_upgrades_table"></div>
                 </div>
+
+                <div class="layer-divider"></div>
+
+                <div class="layer-section">
+                    <div class="layer-label as-label">🎇 ASCENSION</div>
+                    <button class="pres_btn pres_as" id="asce_btn" onclick="MAIN.asce.reset()">???</button>
+                    <div class="upgrades_div" id="ap_upgrades_table"></div>
+                </div>
+
+                <div class="layer-divider"></div>
+
+                <div class="layer-section">
+                    <div class="layer-label rb-label">🌌 REBIRTH</div>
+                    <button class="pres_btn pres_rb" id="reb_btn" onclick="MAIN.reb.reset()">???</button>
+                    <div class="upgrades_div" id="reb_upgrades_table"></div>
+                </div>
             </div>
 
             <!-- Tab 1: Mastery -->
@@ -92,12 +112,48 @@
                     <div id="mastery_tier" class="info-card">
                         Your Mastery Tier is <h3>0</h3>, which boosts luck by <h3>^1.00</h3> and generates <h3>0.00</h3> Mastery Essence every second.
                     </div>
+                    <div id="mastery_stone" class="info-card"></div>
+                    <div id="mastery_clover" class="info-card"></div>
+                    
                     <div class="upgrades_div" id="es_upgrades_table"></div>
+                    <div class="upgrades_div" id="st_upgrades_table"></div>
+                    <div class="upgrades_div" id="cl_upgrades_table"></div>
                 </div>
             </div>
 
-            <!-- Tab 2: Luck Essence -->
+            <!-- Tab 2: Challenges -->
             <div id="tab_div2" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label ch-label">⚔️ CHALLENGES</div>
+                    <div id="currentChall" class="info-card"></div>
+                    <button class="pres_btn" onclick="exitChall()">Finish/Exit Challenge</button>
+                    <div id="unlockChall" style="margin-top: 10px; color: var(--text-secondary);"></div>
+                    <div id="challenges" class="challenges-grid"></div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Super Tier -->
+            <div id="tab_div3" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label st-label">🌌 SUPER TIER</div>
+                    <button class="pres_btn pres_st" id="super_btn" onclick="MAIN.superT.reset()">???</button>
+                    <div id="super_tier" class="info-card"></div>
+                    <div class="upgrades_div" id="se_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Hyper Tier -->
+            <div id="tab_div4" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label ht-label">🚀 HYPER TIER</div>
+                    <button class="pres_btn pres_ht" id="hyper_btn" onclick="MAIN.hyperT.reset()">???</button>
+                    <div id="hyper_tier" class="info-card"></div>
+                    <div class="upgrades_div" id="he_upgrades_table"></div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Luck Essence -->
+            <div id="tab_div5" class="tab-pane">
                 <div class="layer-section">
                     <div class="layer-label le-label">💠 LUCK ESSENCE</div>
                     <div id="luck_essence_display" class="info-card">
@@ -107,28 +163,19 @@
                 </div>
             </div>
 
-            <!-- Tab 3: Celestial Sphere -->
-            <div id="tab_div3" class="tab-pane">
+            <!-- Tab 6: Celestial Sphere -->
+            <div id="tab_div6" class="tab-pane">
                 <div class="layer-section">
                     <div class="layer-label ce-label">🌌 CELESTIAL SPHERE</div>
                     <div id="celestial_display" class="info-card">
-                        This layer unlocks at <b>Mastery Tier 100</b>.
+                        This layer unlocks at <b>Mastery Tier 200</b>.
                     </div>
                     <div class="upgrades_div" id="ce_upgrades_table"></div>
                 </div>
             </div>
 
-            <!-- Tab 4: Ascension -->
-            <div id="tab_div4" class="tab-pane">
-                <div class="layer-section">
-                    <div class="layer-label as-label">🎇 ASCENSION</div>
-                    <button class="pres_btn pres_as" id="ascension_btn" onclick="MAIN.ascension.reset()" style="background-color: #6a0dad; color: white;">???</button>
-                    <div class="upgrades_div" id="as_upgrades_table"></div>
-                </div>
-            </div>
-
-            <!-- Tab 5: Settings -->
-            <div id="tab_div5" class="tab-pane">
+            <!-- Tab 7: Settings -->
+            <div id="tab_div7" class="tab-pane">
                 <div class="layer-section">
                     <div class="layer-label">⚙️ SETTINGS</div>
                     <div class="settings-grid">
@@ -151,8 +198,8 @@
                             <h3 style="margin-bottom:12px;">About</h3>
                             <p style="color:var(--text-secondary);font-size:13px;line-height:1.8;">
                                 Original game by MrRedShark77<br>
-                                Celestial Revamp — UI &amp; new content<br>
-                                Version: Celestial Revamp v0.3
+                                Expanded Edition — Ported by Antigravity<br>
+                                Version: Expanded Edition v1.0
                             </p>
                         </div>
                     </div>
