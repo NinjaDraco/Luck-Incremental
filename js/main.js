@@ -118,6 +118,30 @@ const MAIN = {
             return x
         },
     },
+    ascension: {
+        gain() {
+            let r = player.max_rarity.sub(100000)
+            if (r.lt(0)) return E(0)
+            let x = player.max_rarity.div(100000).pow(0.5)
+            return x.floor()
+        },
+        reset() {
+            if (player.max_rarity.gte(100000)) {
+                player.ascension_energy = player.ascension_energy.add(tmp.asGain)
+                player.aTimes++
+
+                this.doReset()
+            }
+        },
+        doReset() {
+            player.mastery_tier = 0
+            player.mastery_essence = E(0)
+            player.luck_essence = E(0)
+            resetUpgrades('es')
+
+            MAIN.mastery.doReset()
+        },
+    },
 }
 
 el.update.main = ()=>{
@@ -165,6 +189,31 @@ el.update.main = ()=>{
     // Luck Multiplier
 
     tmp.el.luck_mult.setHTML("Your luck multiplier: "+formatMult(tmp.luckMult))
+
+    // Luck Essence display (tab 2)
+    if (tab == 2 && tmp.el.luck_essence_display) {
+        tmp.el.luck_essence_display.setHTML(`
+            You have <b>${player.luck_essence.format()}</b> Luck Essence.<br>
+            Gaining <b>${tmp.leGain.format()}/s</b> from rolls above 100&sigma;.
+        `)
+    }
+    // Celestial display (tab 3)
+    if (tab == 3 && tmp.el.celestial_display) {
+        tmp.el.celestial_display.setHTML(
+            player.mastery_tier < 100
+            ? `<span style='color:var(--text-secondary)'>Unlock at Mastery Tier <b style='color:white'>100</b> (currently ${player.mastery_tier})</span>`
+            : `Celestial layer is active!`
+        )
+    }
+
+    if (tab == 5 && tmp.el.ascension_btn) {
+        tmp.el.ascension_btn.setClasses({locked: player.max_rarity.lt(100000), pres_btn: true})
+
+        tmp.el.ascension_btn.setHTML(`
+        (Require ${getRarityName(100000).bold()})<br>
+        Ascend for ${tmp.asGain.format(0).bold()} Ascension Energy
+        `)
+    }
 }
 
 tmp_update.push(()=>{
@@ -176,4 +225,11 @@ tmp_update.push(()=>{
     tmp.mTierEff = MAIN.mastery.effect()
 
     tmp.essGain = MAIN.mastery.essGain()
+
+    // Luck Essence gain per second (based on mastery tier > 0)
+    tmp.leGain = player.mastery_tier > 0
+        ? Decimal.pow(player.max_rarity.add(1).max(1).log10().add(1), 2).mul(player.mastery_tier)
+        : E(0)
+
+    tmp.asGain = MAIN.ascension.gain()
 })
