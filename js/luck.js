@@ -69,6 +69,8 @@ function getRarityChance(i) {
 function roll() {
     let r = LUCK.generate()
 
+    let isJackpot = r.gt(player.max_rarity) && (r.sub(player.max_rarity).gte(5) || r.gte(1000));
+
     player.max_rarity = player.max_rarity.max(r)
 
     // Grant Luck Essence for rolls exceeding 100σ
@@ -79,10 +81,21 @@ function roll() {
 
     // Update the inner label in the new HTML
     if (tmp.el.rolled_label) {
+        let rollClass = isJackpot ? 'roll-jackpot' : 'roll-glitch';
         tmp.el.rolled_label.setHTML(`
-        <div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px">YOU ROLLED</div>
-        <div class="roll-result-name" style="color:var(--accent);">${getRarityName(r)}</div>
+        <div class="${rollClass}">
+            <div style="font-size:12px; letter-spacing:3px; text-transform:uppercase; color:var(--text-secondary); margin-bottom:4px">YOU ROLLED</div>
+            <div class="roll-result-name" style="color:var(--accent);">${getRarityName(r)}</div>
+        </div>
         `)
+        
+        // Remove the animation classes after they finish to allow re-triggering
+        setTimeout(() => {
+            if (tmp.el.rolled_label && tmp.el.rolled_label.el.querySelector(`.${rollClass}`)) {
+                tmp.el.rolled_label.el.querySelector(`.${rollClass}`).classList.remove(rollClass);
+            }
+        }, isJackpot ? 1500 : 400);
+
     } else {
         tmp.el.rolled_div.setHTML(`You rolled:<br><h1>${getRarityName(r)}</h1>`)
     }
