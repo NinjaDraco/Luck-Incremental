@@ -88,6 +88,10 @@ function getPlayerData() {
 
         mastery_tier: 0,
         mastery_essence: E(0),
+        luck_essence: E(0),
+
+        ascension_energy: E(0),
+        aTimes: 0,
     }
     for (let id in UPGRADES) s.upgrade[id] = new Array(UPGRADES[id].ctn.length).fill(E(0))
     return s
