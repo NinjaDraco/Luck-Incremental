@@ -1960,8 +1960,7 @@
             return negln.lambertw().div(negln);
           } else if (this_num > 1.44466786100976613366) {
             //explodes to infinity
-            // TODO: replace this with Decimal.dInf
-            return Decimal.fromNumber(Number.POSITIVE_INFINITY);
+            return Decimal.dInf;
           } else {
             //0.06598803584531253708 > this_num >= 0: never converges
             //this_num < 0: quickly becomes a complex number
