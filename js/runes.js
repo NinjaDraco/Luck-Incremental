@@ -124,14 +124,14 @@ const RUNES = {
         let multiplier = totalCount.div(numRolls)
 
         for (let i = 0; i < numRolls; i++) {
-            let rand = Math.random() * totalWeight
+            let rand = secureRandom() * totalWeight
 
             let res = "easy"
             if (rand < wRare) res = "rare"
             else if (rand < wRare + wMiddle) res = "middle"
 
             let cloneChance = runeClone.mul(0.1).toNumber()
-            let count = (Math.random() < cloneChance) ? 2 : 1
+            let count = (secureRandom() < cloneChance) ? 2 : 1
             let effectiveCount = multiplier.mul(count)
 
             if (res === "easy") {
