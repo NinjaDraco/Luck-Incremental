@@ -269,6 +269,7 @@ function loadGame(start=true, gotNaN=false) {
         for (let x = 0; x < 50; x++) updateTemp()
         setInterval(save,60000)
         setInterval(loop, 1000/FPS)
+        setInterval(uiLoop, 1000/15)
         setInterval(checkNaN,1000)
 
         setTimeout(

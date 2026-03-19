@@ -2,10 +2,13 @@ var player = {}, date = Date.now(), diff = 0;
 
 function loop() {
     diff = Date.now() - date
-    updateTemp()
-    updateHTML()
     calc(diff/1000);
     date = Date.now();
+}
+
+function uiLoop() {
+    updateTemp()
+    updateHTML()
 }
 
 const MAIN = {
