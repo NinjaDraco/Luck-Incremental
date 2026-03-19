@@ -107,20 +107,25 @@ function getPlayerData() {
         runes: {
             unl: false,
             packs: {
-                pp: { lvl: E(0), progress: E(0), opening: false },
-                tp: { lvl: E(0), progress: E(0), opening: false },
-                rp: { lvl: E(0), progress: E(0), opening: false },
+                pp: { lvl: E(0), progress: E(0), queue: 0 },
+                tp: { lvl: E(0), progress: E(0), queue: 0 },
+                rp: { lvl: E(0), progress: E(0), queue: 0 },
+                ma: { lvl: E(0), progress: E(0), queue: 0 },
+                as: { lvl: E(0), progress: E(0), queue: 0 },
             },
             upgs: {
                 speed: E(0),
                 bulk: E(0),
                 clone: E(0),
                 luck: E(0),
+                auto_pack: "none",
             },
             items: {
                 pp_add: E(0), pp_mult: E(1), pp_exp: E(1),
                 tp_add: E(0), tp_mult: E(1), tp_exp: E(1),
                 rp_add: E(0), rp_mult: E(1), rp_exp: E(1),
+                ma_add: E(0), ma_mult: E(1), ma_exp: E(1),
+                as_add: E(0), as_mult: E(1), as_exp: E(1),
             }
         },
 

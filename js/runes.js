@@ -3,12 +3,14 @@ const RUNES = {
         pp: { cost_base: E(1e20), cost_scale: 1.5, res: "pp" },
         tp: { cost_base: E(1e15), cost_scale: 1.8, res: "tp" },
         rp: { cost_base: E(1e10), cost_scale: 2.0, res: "rp" },
+        ma: { cost_base: E(1e15), cost_scale: 2.5, res: "mastery_essence" },
+        as: { cost_base: E(1e50), cost_scale: 3.0, res: "ap" },
     },
 
     getCost(type) {
         let p = this.packs[type]
         let lvl = player.runes.packs[type].lvl
-        return p.cost_base.mul(Decimal.pow(p.cost_scale, lvl))
+        return p.cost_base.mul(Decimal.pow(10, lvl.pow(1.25)))
     },
 
     buy(type) {
@@ -17,11 +19,15 @@ const RUNES = {
         if (player[res].gte(cost)) {
             player[res] = player[res].sub(cost)
             player.runes.packs[type].lvl = player.runes.packs[type].lvl.add(1)
+            player.runes.packs[type].queue++
         }
     },
 
     toggleOpening(type) {
-        player.runes.packs[type].opening = !player.runes.packs[type].opening
+        const types = ["none", "pp", "tp", "rp", "ma", "as"]
+        let current = player.runes.upgs.auto_pack || "none"
+        let index = types.indexOf(current)
+        player.runes.upgs.auto_pack = types[(index + 1) % types.length]
     },
 
     update(diff) {
@@ -30,17 +36,21 @@ const RUNES = {
         let runeSpeed = player.runes.upgs.speed || E(0)
         let runeBulk = player.runes.upgs.bulk || E(0)
 
+        // Auto Pack Logic
+        let auto = player.runes.upgs.auto_pack || "none"
+        if (auto !== "none") this.buy(auto)
+
         // Opening Time: 30 / (1 + RuneSpeed) seconds.
         let time = E(30).div(E(1).add(runeSpeed))
 
         for (let type in this.packs) {
             let p = player.runes.packs[type]
-            if (p.opening && p.lvl.gt(0)) {
+            if (p.queue > 0 && p.lvl.gt(0)) {
                 let added = E(diff).div(time)
                 p.progress = p.progress.add(added)
                 
                 if (p.progress.gte(1)) {
-                    let completions = p.progress.floor()
+                    let completions = p.progress.floor().min(p.queue)
                     
                     // Rune Bulk: Adds floor(RuneBulk) to the number of rolls.
                     // Each completion gives (1 + floor(RuneBulk)) rolls.
@@ -50,6 +60,7 @@ const RUNES = {
                     this.roll(type, totalRolls)
                     
                     p.progress = p.progress.sub(completions)
+                    p.queue -= completions.toNumber()
                 }
             } else {
                 p.progress = E(0)
@@ -86,8 +97,9 @@ const RUNES = {
             let effectiveCount = multiplier.mul(count)
 
             if (res === "easy") {
-                // Easy: +100 to _add
-                player.runes.items[type + "_add"] = player.runes.items[type + "_add"].add(E(100).mul(effectiveCount))
+                // Easy: +100 to _add (1e15 for ma)
+                let addAmt = type === 'ma' ? E(1e15) : E(100)
+                player.runes.items[type + "_add"] = player.runes.items[type + "_add"].add(addAmt.mul(effectiveCount))
             } else if (res === "middle") {
                 // Middle: *2 to _mult
                 player.runes.items[type + "_mult"] = player.runes.items[type + "_mult"].mul(Decimal.pow(2, effectiveCount))
