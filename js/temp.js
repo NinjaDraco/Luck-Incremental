@@ -10,7 +10,31 @@ function resetTemp() {
 
         mTierEff: {},
 
+        ppGain: E(0),
+        tpGain: E(0),
+        rpGain: E(0),
+        apGain: E(0),
+        rebGain: E(0),
+        
+        mTierReq: E(0),
+        essGain: E(0),
+        stoneGain: E(0),
+        cloverGain: E(0),
+        
+        sTierReq: 0,
+        seGain: E(0),
+        
+        hTierReq: 0,
+        heGain: E(0),
+
+        weatherEff: {
+            luck: E(1),
+            roll_interval: E(1),
+            all: E(1),
+        },
+
         upgs: {},
+        el: {},
     }
 
     for (let id in UPGRADES) {

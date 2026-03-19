@@ -20,7 +20,7 @@ const MAIN = {
 
             x = x.mul(upgradeEffect('tp',1)).mul(upgradeEffect('rp',1)).mul(upgradeEffect('ap',1)).mul(upgradeEffect('es',1)[1])
             
-            x = x.mul(tmp.weatherEff.prestige).mul(tmp.weatherEff.all)
+            x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('pp','add')).mul(RUNES.getEff('pp','mult')).pow(RUNES.getEff('pp','exp'))
 
@@ -51,7 +51,7 @@ const MAIN = {
 			
             x = x.mul(upgradeEffect('rp',2)).mul(upgradeEffect('ap',2)).mul(upgradeEffect('es',3)[1])
 
-            x = x.mul(tmp.weatherEff.prestige).mul(tmp.weatherEff.all)
+            x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('tp','add')).mul(RUNES.getEff('tp','mult')).pow(RUNES.getEff('tp','exp'))
 
@@ -83,7 +83,7 @@ const MAIN = {
 				
             x = x.mul(upgradeEffect('ap',3)).mul(upgradeEffect('es',4)[1])
 
-            x = x.mul(tmp.weatherEff.prestige).mul(tmp.weatherEff.all)
+            x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('rp','add')).mul(RUNES.getEff('rp','mult')).pow(RUNES.getEff('rp','exp'))
 
@@ -114,6 +114,8 @@ const MAIN = {
 			
 			x = x.mul(upgradeEffect('pp',7)).mul(upgradeEffect('ap',4)).mul(upgradeEffect('es',13)).mul(upgradeEffect('st',12)).mul(hasUpgrade('se',9)?player.chall[10].add(1).pow(player.upgrade.se[9].log10().add(1)):player.chall[10].add(1).log10().add(1))
 
+            x = x.mul(tmp.weatherEff.all)
+
             x = x.add(RUNES.getEff('as','add')).mul(RUNES.getEff('as','mult')).pow(RUNES.getEff('as','exp'))
 
             return x.floor()
@@ -138,6 +140,8 @@ const MAIN = {
 			if(!hasUpgrade('he',8)) return E(0);
             let x = player.max_rarity.add(10).log10().mul(player.ap.add(10).log10()).pow(E(20).add(upgradeEffect('reb',2))).div(Decimal.pow(10,Decimal.pow(10,E(2).sub(player.upgrade.reb[2].div(700))))).mul(upgradeEffect('reb',4));
             
+            x = x.mul(tmp.weatherEff.all)
+
             return x.floor()
         },
         reset() {
@@ -191,7 +195,7 @@ const MAIN = {
 			if(player.currentChall == 11) return E(0);
             let x = tmp.mTierEff.gen.mul(upgradeEffect('pp',4)).mul(upgradeEffect('tp',7)).mul(upgradeEffect('es',7)).mul(upgradeEffect('ap',5)).mul(upgradeEffect('st',2)).mul(upgradeEffect('se',0))
 
-            x = x.mul(tmp.weatherEff.mastery).mul(tmp.weatherEff.all)
+            x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('ma','add')).mul(RUNES.getEff('ma','mult')).pow(RUNES.getEff('ma','exp'))
 
@@ -202,12 +206,16 @@ const MAIN = {
 			if(player.mastery_tier<45 && !hasUpgrade('se',4)) return E(0);
             let x = E(player.mastery_tier).div(hasUpgrade('se',4)?E(40).div(player.upgrade.se[4].root(2)):45).add(player.upgrade.se[4]).pow(upgradeEffect('he',3).add(25)).mul(upgradeEffect('st',2)).mul(upgradeEffect('se',0)).mul(upgradeEffect('he',0));
 
+            x = x.mul(tmp.weatherEff.all)
+
             return x
         },
         cloverGain() {
 			if(!hasUpgrade('he',9)) return E(0);
 			if(player.currentChall == 11) return E(0);
             let x = E(player.mastery_tier).div(1e12).pow(5).mul(upgradeEffect('cl',4));
+
+            x = x.mul(tmp.weatherEff.all)
 
             return x
         },
@@ -236,6 +244,9 @@ const MAIN = {
         seGain() {
 			if(player.super_tier==0) return E(0);
             let x = E(player.mastery_tier).mul(player.super_tier).pow(Math.log10((player.super_tier+1)**3+2)+2).mul(upgradeEffect('st',11)).mul(upgradeEffect('se',14)).mul(upgradeEffect('he',0));
+            
+            x = x.mul(tmp.weatherEff.all)
+
             return x
         },
     },
@@ -259,6 +270,9 @@ const MAIN = {
         heGain() {
 			if(player.hyper_tier==0) return E(0);
             let x = E(player.super_tier).mul(player.hyper_tier).pow(Math.log10((player.hyper_tier+1)**3+2));
+            
+            x = x.mul(tmp.weatherEff.all)
+
             return x
         },
     },
