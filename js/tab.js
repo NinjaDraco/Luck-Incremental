@@ -1,21 +1,27 @@
 var tab = 0
 
 const TABS = {
-    unl_length() {
-        let u = 1                                // always show Prestige tab
-        if (player.rTimes > 0) u++              // Mastery tab after first Reincarnation
-        if (player.mastery_tier >= 5) u++       // Luck Essence tab
-        if (player.mastery_tier >= 100) u++     // Celestial tab
-        if (player.aTimes > 0 || player.max_rarity.gte(100000)) u++ // Ascension tab
-        return u
+    unl(i) {
+        if (i === 0 || i === 8) return true          // Main and Settings
+        if (i === 1) return player.rTimes > 0       // Mastery tab
+        if (i === 2) return hasUpgrade('es', 14)    // Challenges tab
+        if (i === 3) return player.mastery_tier >= 100 || player.super_tier > 0 // Super Tier
+        if (i === 4) return player.super_tier >= 100 || player.hyper_tier > 0  // Hyper Tier
+        if (i === 5) return player.mastery_tier >= 5  // Luck Essence tab
+        if (i === 6) return player.mastery_tier >= 200 // Celestial tab
+        if (i === 7) return player.pTimes > 0        // Rune tab
+        return false
     },
     data: [
-        { icon: '⚗️',  label: 'Prestige'       },
-        { icon: '✨',  label: 'Mastery'         },
+        { icon: '✨',  label: 'Main'            },
+        { icon: '🔮',  label: 'Mastery'         },
+        { icon: '⚔️',  label: 'Challenges'      },
+        { icon: '🌌',  label: 'Super Tier'       },
+        { icon: '🚀',  label: 'Hyper Tier'       },
         { icon: '💠',  label: 'Luck Essence'    },
-        { icon: '🌌',  label: 'Celestial'       },
-        { icon: '🎇',  label: 'Ascension'       },
-        { icon: '⚙️',  label: 'Settings'        },  // always visible
+        { icon: '✨',  label: 'Celestial'       },
+        { icon: '💠',  label: 'Runes'           },
+        { icon: '⚙️',  label: 'Settings'        },
     ]
 }
 
@@ -32,15 +38,11 @@ el.setup.tabs = () => {
 }
 
 el.update.tabs = () => {
-    const u = TABS.unl_length()
-    const settingsIdx = TABS.data.length - 1  // Settings is always last
-
     for (let i = 0; i < TABS.data.length; i++) {
         const btn = tmp.el['tabbtn' + i]
         if (!btn || !btn.el) continue
 
-        // Show: within unlocked count OR it's the Settings tab
-        const visible = (i < u) || (i === settingsIdx)
+        const visible = TABS.unl(i)
         btn.setDisplay(visible)
         btn.setClasses({ 'nav-btn': true, 'nav-btn-active': tab === i })
 

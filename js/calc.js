@@ -37,6 +37,7 @@ function calc(dt) {
     player.mastery_clover = player.mastery_clover.add(tmp.cloverGain.mul(dt))
     player.super_essence = player.super_essence.add(tmp.seGain.mul(dt))
     player.hyper_essence = player.hyper_essence.add(tmp.heGain.mul(dt))
+    player.luck_essence = player.luck_essence.add(tmp.leGain.mul(dt))
 
     // Passive rarity increase
     if (hasUpgrade('tp', 6) || hasUpgrade('rp', 5)) player.max_rarity = player.max_rarity.max(LUCK.update())
