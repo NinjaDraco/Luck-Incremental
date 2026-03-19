@@ -1,15 +1,15 @@
 const RUNES = {
     packs: {
-        pp: { cost_base: E(1e20), res: "pp", add: 100 },
-        tp: { cost_base: E(1e15), res: "tp", add: 100 },
-        rp: { cost_base: E(1e10), res: "rp", add: 100 },
-        ma: { cost_base: E(1e15), res: "mastery_essence", add: 1e15 },
-        as: { cost_base: E(1e50), res: "ap", add: 100 },
-        rb: { cost_base: E(1e10), res: "reb", add: 100 },
-        ms: { cost_base: E(1e100), res: "mastery_stone", add: 1e50 },
-        mc: { cost_base: E(1e15), res: "mastery_clover", add: 1e5 },
-        se: { cost_base: E(1e50), res: "super_essence", add: 1e20 },
-        he: { cost_base: E(1e20), res: "hyper_essence", add: 1e10 },
+        pp: { cost_base: E(1e20), res: "pp", add: 100, res_name: "PP" },
+        tp: { cost_base: E(1e15), res: "tp", add: 100, res_name: "TP" },
+        rp: { cost_base: E(1e10), res: "rp", add: 100, res_name: "RP" },
+        ma: { cost_base: E(1e15), res: "mastery_essence", add: 1e15, res_name: "ME" },
+        as: { cost_base: E(1e50), res: "ap", add: 100, res_name: "AP" },
+        rb: { cost_base: E(1e10), res: "reb", add: 100, res_name: "RB" },
+        ms: { cost_base: E(1e100), res: "mastery_stone", add: 1e50, res_name: "MASTERY STONE" },
+        mc: { cost_base: E(1e15), res: "mastery_clover", add: 1e5, res_name: "MASTERY CLOVER" },
+        se: { cost_base: E(1e50), res: "super_essence", add: 1e20, res_name: "SUPER ESSENCE" },
+        he: { cost_base: E(1e20), res: "hyper_essence", add: 1e10, res_name: "HYPER ESSENCE" },
     },
 
     getCost(type) {
