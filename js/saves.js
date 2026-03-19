@@ -162,7 +162,6 @@ function loadPlayer(load) {
     const DATA = getPlayerData()
     player = deepNaN(load, DATA)
     player = deepUndefinedAndDecimal(player, DATA)
-    convertStringToDecimal()
 }
 
 function deepNaN(obj, data) {
@@ -190,10 +189,6 @@ function deepUndefinedAndDecimal(obj, data) {
         }
     }
     return obj
-}
-
-function convertStringToDecimal() {
-    
 }
 
 function cannotSave() { return false }
