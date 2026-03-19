@@ -436,16 +436,21 @@ el.update.main = ()=>{
 
         // Packs
         const types = ["pp", "tp", "rp", "ma", "as", "rb", "ms", "mc", "se", "he"]
+        let damp = upgradeEffect('le', 7, E(1))
         for (let t of types) {
             let p = player.runes.packs[t]
-            let cost = RUNES.getCost(t)
-            let res = RUNES.packs[t].res.replace("_", " ").toUpperCase()
-            if (t == 'ma') res = "ME"
-            if (t == 'as') res = "AP"
-            if (t == 'rb') res = "RB"
-            
-            // Sub-element caching via Element class's built-in checks
-            tmp.el[`rune_pack_${t}_info`].setHTML(`<b>Cost:</b> ${cost.format()} ${res}<br><b>Queue:</b> ${p.queue}`)
+            let infoEl = tmp.el[`rune_pack_${t}_info`]
+
+            if (infoEl.lastQueue !== p.queue || infoEl.lastLvl === undefined || !infoEl.lastLvl.eq(p.lvl) || !infoEl.lastDamp.eq(damp)) {
+                let cost = RUNES.getCost(t)
+                let res = RUNES.packs[t].res_name
+
+                infoEl.setHTML(`<b>Cost:</b> ${cost.format()} ${res}<br><b>Queue:</b> ${p.queue}`)
+
+                infoEl.lastQueue = p.queue
+                infoEl.lastLvl = p.lvl
+                infoEl.lastDamp = damp
+            }
             
             let prog = (p.progress.min(1).toNumber() * 100) + "%"
             let progEl = tmp.el[`rune_pack_${t}_progress`]
