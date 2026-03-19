@@ -17,9 +17,9 @@ const LUCK = {
         return x
     },
     generate() {
-        let r = Decimal.pow(Math.random(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
+        let r = Decimal.pow(secureRandom(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
 
-        while(Decimal.isNaN(r)) r = Decimal.pow(Math.random(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
+        while(Decimal.isNaN(r)) r = Decimal.pow(secureRandom(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
             
         return r.floor()
     },
@@ -30,9 +30,9 @@ const LUCK = {
             step = E(1e6)
         }
         
-        let r = Decimal.pow(E(1).sub(Decimal.pow(Math.random(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
+        let r = Decimal.pow(E(1).sub(Decimal.pow(secureRandom(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
         
-        while(Decimal.isNaN(r)) r = Decimal.pow(E(1).sub(Decimal.pow(Math.random(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
+        while(Decimal.isNaN(r)) r = Decimal.pow(E(1).sub(Decimal.pow(secureRandom(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
             
         return r.floor()
     },
