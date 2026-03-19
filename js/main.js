@@ -503,8 +503,8 @@ el.update.main = ()=>{
         for (let i = 0; i < types_auto.length; i++) {
             let t = types_auto[i]
             let active = player.runes.upgs.auto_pack.includes(t)
-            let el_btn = document.getElementById(`auto_pack_check_${t}`)
-            if (el_btn) el_btn.checked = active
+            let el_btn = tmp.el[`auto_pack_check_${t}`]
+            if (el_btn && el_btn.el && el_btn.el.checked !== active) el_btn.el.checked = active
         }
     }
 }
