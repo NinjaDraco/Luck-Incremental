@@ -407,8 +407,7 @@ el.update.main = ()=>{
             let res = RUNES.packs[t].res.replace("_", " ").toUpperCase()
             if (t == 'ma') res = "ME"
             if (t == 'as') res = "AP"
-            tmp.el[`rune_pack_${t}_info`].setHTML(`Level: ${p.lvl.format(0)} | Queue: ${p.queue} | Cost: ${cost.format()} ${res}`)
-            tmp.el[`rune_pack_${t}_toggle`].setHTML("Auto: " + (player.runes.upgs.auto_pack == t ? "ON" : "OFF"))
+            tmp.el[`rune_pack_${t}_info`].setHTML(`Cost: ${cost.format()} ${res} | Queue: ${p.queue}`)
             tmp.el[`rune_pack_${t}_progress`].el.style.width = (p.progress.min(1).toNumber() * 100) + "%"
         }
 
@@ -439,6 +438,13 @@ el.update.main = ()=>{
             You have <b>${player.luck_essence.format()}</b> Luck Essence.<br>
             Gaining <b>${tmp.leGain.format()}/s</b> from rolls above 100&sigma;.
         `)
+
+        const types_auto = ["none", "pp", "tp", "rp", "ma", "as"]
+        for (let i = 0; i < types_auto.length; i++) {
+            let t = types_auto[i]
+            let el_btn = tmp.el.auto_packer_buttons.el.children[i]
+            if (el_btn) el_btn.className = "settings-btn " + (player.runes.upgs.auto_pack == t ? "active" : "")
+        }
     }
 }
 

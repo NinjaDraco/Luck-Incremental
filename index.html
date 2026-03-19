@@ -159,6 +159,20 @@
                     <div id="luck_essence_display" class="info-card">
                         Reach <b>Mastery Tier 5</b> to unlock Luck Essence.
                     </div>
+
+                    <div class="info-card">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Auto-Packer</div>
+                        <div style="margin-bottom: 10px; color: var(--text-secondary);">Select a pack to automatically open when affordable.</div>
+                        <div class="settings-btn-group" id="auto_packer_buttons">
+                            <button class="settings-btn" onclick="RUNES.setAutoPack('none')">None</button>
+                            <button class="settings-btn pp-label" onclick="RUNES.setAutoPack('pp')">Prestige</button>
+                            <button class="settings-btn tp-label" onclick="RUNES.setAutoPack('tp')">Transcension</button>
+                            <button class="settings-btn rp-label" onclick="RUNES.setAutoPack('rp')">Reincarnation</button>
+                            <button class="settings-btn me-label" onclick="RUNES.setAutoPack('ma')">Mastery</button>
+                            <button class="settings-btn as-label" onclick="RUNES.setAutoPack('as')">Ascension</button>
+                        </div>
+                    </div>
+
                     <div class="upgrades_div" id="le_upgrades_table"></div>
                 </div>
             </div>
@@ -174,8 +188,94 @@
                 </div>
             </div>
 
-            <!-- Tab 7: Settings -->
+            <!-- Tab 7: Runes -->
             <div id="tab_div7" class="tab-pane">
+                <div class="layer-section">
+                    <div class="layer-label rune-label">💠 RUNES</div>
+                    
+                    <div class="info-card">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rune Stats Summary</div>
+                        <div id="rune_stats_summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: left;">
+                            <!-- Injected by main.js -->
+                        </div>
+                    </div>
+
+                    <div class="layer-divider"></div>
+
+                    <div id="rune_packs_container" class="upgrades_div" style="display: flex; flex-direction: column; gap: 20px;">
+                        <div class="info-card">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rune Packs</div>
+                            <div class="settings-grid" style="grid-template-columns: repeat(3, 1fr);">
+                                <div class="settings-card" id="rune_pack_pp">
+                                    <h3 class="pp-label">Prestige Pack</h3>
+                                    <div id="rune_pack_pp_info">Cost: ??? PP | Queue: 0</div>
+                                    <div class="settings-btn-group" style="margin-top: 10px;">
+                                        <button class="settings-btn" onclick="RUNES.openPack('pp')">Open Pack</button>
+                                    </div>
+                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
+                                        <div id="rune_pack_pp_progress" style="width: 0%; height: 100%; background: #008cff;"></div>
+                                    </div>
+                                </div>
+                                <div class="settings-card" id="rune_pack_tp">
+                                    <h3 class="tp-label">Transcension Pack</h3>
+                                    <div id="rune_pack_tp_info">Cost: ??? TP | Queue: 0</div>
+                                    <div class="settings-btn-group" style="margin-top: 10px;">
+                                        <button class="settings-btn" onclick="RUNES.openPack('tp')">Open Pack</button>
+                                    </div>
+                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
+                                        <div id="rune_pack_tp_progress" style="width: 0%; height: 100%; background: #00ff8c;"></div>
+                                    </div>
+                                </div>
+                                <div class="settings-card" id="rune_pack_rp">
+                                    <h3 class="rp-label">Reincarnation Pack</h3>
+                                    <div id="rune_pack_rp_info">Cost: ??? RP | Queue: 0</div>
+                                    <div class="settings-btn-group" style="margin-top: 10px;">
+                                        <button class="settings-btn" onclick="RUNES.openPack('rp')">Open Pack</button>
+                                    </div>
+                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
+                                        <div id="rune_pack_rp_progress" style="width: 0%; height: 100%; background: #8c00ff;"></div>
+                                    </div>
+                                </div>
+                                <div class="settings-card" id="rune_pack_ma">
+                                    <h3 class="me-label">Mastery Pack</h3>
+                                    <div id="rune_pack_ma_info">Cost: ??? ME | Queue: 0</div>
+                                    <div class="settings-btn-group" style="margin-top: 10px;">
+                                        <button class="settings-btn" onclick="RUNES.openPack('ma')">Open Pack</button>
+                                    </div>
+                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
+                                        <div id="rune_pack_ma_progress" style="width: 0%; height: 100%; background: #ff008c;"></div>
+                                    </div>
+                                </div>
+                                <div class="settings-card" id="rune_pack_as">
+                                    <h3 class="as-label">Ascension Pack</h3>
+                                    <div id="rune_pack_as_info">Cost: ??? AP | Queue: 0</div>
+                                    <div class="settings-btn-group" style="margin-top: 10px;">
+                                        <button class="settings-btn" onclick="RUNES.openPack('as')">Open Pack</button>
+                                    </div>
+                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
+                                        <div id="rune_pack_as_progress" style="width: 0%; height: 100%; background: #ff8c00;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="layer-divider"></div>
+
+                    <div class="info-card">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rune Upgrades</div>
+                        <div id="rune_essence_display" style="margin-bottom: 15px; font-size: 16px;">
+                            You have <b class="le-label">???</b> Luck Essence
+                        </div>
+                        <div class="upgs-grid" id="rune_upgrades_table">
+                            <!-- Injected by main.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 8: Settings -->
+            <div id="tab_div8" class="tab-pane">
                 <div class="layer-section">
                     <div class="layer-label">⚙️ SETTINGS</div>
                     <div class="settings-grid">

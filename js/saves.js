@@ -121,11 +121,11 @@ function getPlayerData() {
                 auto_pack: "none",
             },
             items: {
-                pp_add: E(0), pp_mult: E(1), pp_exp: E(1),
-                tp_add: E(0), tp_mult: E(1), tp_exp: E(1),
-                rp_add: E(0), rp_mult: E(1), rp_exp: E(1),
-                ma_add: E(0), ma_mult: E(1), ma_exp: E(1),
-                as_add: E(0), as_mult: E(1), as_exp: E(1),
+                pp_add: E(0), pp_mult: E(0), pp_exp: E(1),
+                tp_add: E(0), tp_mult: E(0), tp_exp: E(1),
+                rp_add: E(0), rp_mult: E(0), rp_exp: E(1),
+                ma_add: E(0), ma_mult: E(0), ma_exp: E(1),
+                as_add: E(0), as_mult: E(0), as_exp: E(1),
             }
         },
 
