@@ -55,8 +55,8 @@ const WEATHER = {
             }
         }
 
-        // Trigger new weather
-        if (Math.random() < dt * 0.05) { // ~ once every 20s average
+        // Trigger new weather (capped chance per tick)
+        if (Math.random() < Math.min(dt * 0.05, 0.5)) { // Max 50% chance per tick
             this.trigger()
         }
     },
@@ -116,8 +116,11 @@ const WEATHER = {
         if (!tmp.el.weather_display) return
         
         if (!player.weather || player.weather.length === 0) {
-            tmp.el.weather_display.setHTML("")
-            this.last_structure = ""
+            if (this.last_structure !== "empty") {
+                tmp.el.weather_display.setHTML("")
+                this.last_structure = "empty"
+                this.timerEls = null
+            }
             return
         }
 
@@ -126,11 +129,12 @@ const WEATHER = {
         if (rareActive) mainColor = this.types[rareActive.id].color
         else if (player.weather.length > 0) mainColor = this.types[player.weather[0].id].color
 
-        // Check if the structure (excluding timers) changed
-        let structure = player.weather.map(w => w.id + "_" + w.rng).join(",") + mainColor
+        // Check if the structure (IDS only) changed
+        let structure = player.weather.map(w => w.id).sort().join(",")
         if (this.last_structure !== structure) {
             this.last_structure = structure
-            let h = `<div class="weather-banner" style="border-color: ${mainColor}; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px ${mainColor}55">`
+            this.timerEls = []
+            let h = `<div class="weather-banner" style="border-color: ${mainColor}; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px ${mainColor}55; animation: weather-float 4s ease-in-out infinite;">`
             for (let i = 0; i < player.weather.length; i++) {
                 let w = player.weather[i]
                 let type = this.types[w.id]
@@ -148,9 +152,16 @@ const WEATHER = {
             tmp.el.weather_display.setHTML(h)
         }
 
-        // Update timers separately to avoid restarting the entrance animation
+        // Update timers separately using cached elements
+        if (!this.timerEls || this.timerEls.length !== player.weather.length) {
+            this.timerEls = []
+            for (let i = 0; i < player.weather.length; i++) {
+                this.timerEls[i] = document.getElementById(`weather_timer_${i}`)
+            }
+        }
+
         for (let i = 0; i < player.weather.length; i++) {
-            let timerEl = document.getElementById(`weather_timer_${i}`)
+            let timerEl = this.timerEls[i]
             if (timerEl) {
                 let t = format(player.weather[i].duration, 1) + "s"
                 if (timerEl.innerText !== t) timerEl.innerText = t

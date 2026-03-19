@@ -1,4 +1,5 @@
 function calc(dt) {
+    dt = Math.min(dt, 1); // Cap dt to 1s to prevent system breakage on lag/load
     player.time += dt
     player.roll_time += dt
     WEATHER.update(dt)

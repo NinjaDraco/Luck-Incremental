@@ -112,13 +112,18 @@ function getPlayerData() {
                 rp: { lvl: E(0), progress: E(0), queue: 0 },
                 ma: { lvl: E(0), progress: E(0), queue: 0 },
                 as: { lvl: E(0), progress: E(0), queue: 0 },
+                rb: { lvl: E(0), progress: E(0), queue: 0 },
+                ms: { lvl: E(0), progress: E(0), queue: 0 },
+                mc: { lvl: E(0), progress: E(0), queue: 0 },
+                se: { lvl: E(0), progress: E(0), queue: 0 },
+                he: { lvl: E(0), progress: E(0), queue: 0 },
             },
             upgs: {
                 speed: E(0),
                 bulk: E(0),
                 clone: E(0),
                 luck: E(0),
-                auto_pack: "none",
+                auto_pack: [],
             },
             items: {
                 pp_add: E(0), pp_mult: E(0), pp_exp: E(1),
@@ -126,11 +131,17 @@ function getPlayerData() {
                 rp_add: E(0), rp_mult: E(0), rp_exp: E(1),
                 ma_add: E(0), ma_mult: E(0), ma_exp: E(1),
                 as_add: E(0), as_mult: E(0), as_exp: E(1),
+                rb_add: E(0), rb_mult: E(0), rb_exp: E(1),
+                ms_add: E(0), ms_mult: E(0), ms_exp: E(1),
+                mc_add: E(0), mc_mult: E(0), mc_exp: E(1),
+                se_add: E(0), se_mult: E(0), se_exp: E(1),
+                he_add: E(0), he_mult: E(0), he_exp: E(1),
             }
         },
 
         chall: [],
         currentChall: -1,
+        weather: [],
     }
     for (let id in UPGRADES) s.upgrade[id] = new Array(UPGRADES[id].ctn.length).fill(E(0))
     for (let id in CHALLENGES) s.chall[id] = E(0)

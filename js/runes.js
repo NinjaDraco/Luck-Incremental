@@ -1,16 +1,30 @@
 const RUNES = {
     packs: {
-        pp: { cost_base: E(1e20), res: "pp" },
-        tp: { cost_base: E(1e15), res: "tp" },
-        rp: { cost_base: E(1e10), res: "rp" },
-        ma: { cost_base: E(1e15), res: "mastery_essence" },
-        as: { cost_base: E(1e50), res: "ap" },
+        pp: { cost_base: E(1e20), res: "pp", add: 100 },
+        tp: { cost_base: E(1e15), res: "tp", add: 100 },
+        rp: { cost_base: E(1e10), res: "rp", add: 100 },
+        ma: { cost_base: E(1e15), res: "mastery_essence", add: 1e15 },
+        as: { cost_base: E(1e50), res: "ap", add: 100 },
+        rb: { cost_base: E(1e10), res: "reb", add: 100 },
+        ms: { cost_base: E(1e100), res: "mastery_stone", add: 1e50 },
+        mc: { cost_base: E(1e15), res: "mastery_clover", add: 1e5 },
+        se: { cost_base: E(1e50), res: "super_essence", add: 1e20 },
+        he: { cost_base: E(1e20), res: "hyper_essence", add: 1e10 },
     },
 
     getCost(type) {
         let p = this.packs[type]
         let lvl = player.runes.packs[type].lvl
-        return p.cost_base.mul(Decimal.pow(10, lvl.pow(1.25)))
+        let damp = upgradeEffect('le',7,E(1))
+        
+        let mult = 2
+        if (type == 'pp') mult = 1.5
+        if (type == 'tp') mult = 1.8
+        if (type == 'rp') mult = 2.0
+        
+        // Optimization: use simpler power if damp is 1
+        if (damp.eq(1)) return p.cost_base.mul(Decimal.pow(mult, lvl))
+        return p.cost_base.mul(Decimal.pow(mult, lvl.pow(damp)))
     },
 
     openPack(type) {
@@ -23,23 +37,30 @@ const RUNES = {
         }
     },
 
-    setAutoPack(type) {
-        player.runes.upgs.auto_pack = type
+    toggleAutoPack(type) {
+        let i = player.runes.upgs.auto_pack.indexOf(type)
+        if (i > -1) player.runes.upgs.auto_pack.splice(i, 1)
+        else {
+            let max = upgradeEffect('le',2,0) + 1
+            if (player.runes.upgs.auto_pack.length < max) player.runes.upgs.auto_pack.push(type)
+        }
     },
 
     getEff(type, stat) {
         let val = player.runes.items[type + "_" + stat]
-        if (stat === 'add') return val
+        let potency = upgradeEffect('le',6,E(1))
+        if (stat === 'add') return val.mul(potency)
         if (stat === 'mult') {
-            let base = E(1).add(val)
+            let base = E(1).add(val.mul(potency))
             if (base.gt(1e10)) base = Decimal.pow(10, base.log10().softcap(10, 0.5, "pow"))
             if (base.gt(1e100)) base = Decimal.pow(10, base.log10().softcap(100, 0.1, "pow"))
             return base
         }
         if (stat === 'exp') {
-            if (val.gt(1.1)) val = val.softcap(1.1, 0.5, "pow")
-            if (val.gt(1.2)) val = val.softcap(1.2, 0.1, "pow")
-            return val
+            let v = val.sub(1).mul(potency).add(1)
+            if (v.gt(1.1)) v = v.softcap(1.1, 0.5, "pow")
+            if (v.gt(1.2)) v = v.softcap(1.2, 0.1, "pow")
+            return v
         }
         return E(1)
     },
@@ -49,17 +70,18 @@ const RUNES = {
 
         let runeSpeed = player.runes.upgs.speed || E(0)
         let runeBulk = player.runes.upgs.bulk || E(0)
+        let bulkAdd = upgradeEffect('le',4,E(0))
+        let quantum = upgradeEffect('le',3,E(1))
 
         // Auto Pack Logic
-        let auto = player.runes.upgs.auto_pack || "none"
-        if (auto !== "none") {
-            let cost = this.getCost(auto)
-            let res = this.packs[auto].res
-            if (player[res].gte(cost)) this.openPack(auto)
+        for (let target of player.runes.upgs.auto_pack) {
+            let cost = this.getCost(target)
+            let res = this.packs[target].res
+            if (player[res].gte(cost)) this.openPack(target)
         }
 
         // Opening Time: 30 / (1 + RuneSpeed) seconds.
-        let time = E(30).div(E(1).add(runeSpeed))
+        let time = E(30).div(E(1).add(runeSpeed)).mul(quantum).max(0.1)
 
         for (let type in this.packs) {
             let p = player.runes.packs[type]
@@ -68,23 +90,26 @@ const RUNES = {
                 p.progress = p.progress.add(added)
                 
                 if (p.progress.gte(1)) {
-                    let completions = p.progress.floor()
-                    if (completions.gt(p.queue)) completions = E(p.queue)
+                    let batch = upgradeEffect('le',8,E(1))
+                    let completions = p.progress.floor().min(p.queue).min(batch)
                     
-                    let baseRolls = E(1).add(runeBulk.floor())
-                    this.roll(type, baseRolls.mul(completions))
-                    
-                    p.queue -= completions.toNumber()
-                    p.progress = p.progress.sub(completions)
+                    if (completions.gt(0)) {
+                        let baseRolls = E(1).add(runeBulk.floor()).add(bulkAdd)
+                        this.roll(type, baseRolls.mul(completions))
+                        
+                        p.queue = Math.max(0, p.queue - completions.toNumber())
+                        p.progress = p.progress.sub(completions)
+                    }
                 }
-            } else {
-                p.progress = E(0)
             }
         }
     },
 
     roll(type, totalCount = E(1)) {
-        let runeLuck = player.runes.upgs.luck || E(0)
+        totalCount = E(totalCount)
+        if (totalCount.lte(0) || isNaN(totalCount.mag)) return;
+
+        let runeLuck = (player.runes.upgs.luck || E(0)).mul(upgradeEffect('le',5,E(1)))
         let runeClone = player.runes.upgs.clone || E(0)
 
         // Rarity Weights (Base): Easy: 100, Middle: 10, Rare: 1
@@ -110,7 +135,7 @@ const RUNES = {
             let effectiveCount = multiplier.mul(count)
 
             if (res === "easy") {
-                let addAmt = type === 'ma' ? E(1e15) : E(100)
+                let addAmt = E(this.packs[type].add || 100)
                 player.runes.items[type + "_add"] = player.runes.items[type + "_add"].add(addAmt.mul(effectiveCount))
             } else if (res === "middle") {
                 // Middle runes ADD to _mult

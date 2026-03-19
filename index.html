@@ -160,18 +160,29 @@
                         Reach <b>Mastery Tier 5</b> to unlock Luck Essence.
                     </div>
 
+                    <div class="layer-divider"></div>
+
                     <div class="info-card">
-                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Auto-Packer</div>
-                        <div style="margin-bottom: 10px; color: var(--text-secondary);">Select a pack to automatically open when affordable.</div>
-                        <div class="settings-btn-group" id="auto_packer_buttons">
-                            <button class="settings-btn" onclick="RUNES.setAutoPack('none')">None</button>
-                            <button class="settings-btn pp-label" onclick="RUNES.setAutoPack('pp')">Prestige</button>
-                            <button class="settings-btn tp-label" onclick="RUNES.setAutoPack('tp')">Transcension</button>
-                            <button class="settings-btn rp-label" onclick="RUNES.setAutoPack('rp')">Reincarnation</button>
-                            <button class="settings-btn me-label" onclick="RUNES.setAutoPack('ma')">Mastery</button>
-                            <button class="settings-btn as-label" onclick="RUNES.setAutoPack('as')">Ascension</button>
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Automation Hub</div>
+                        <div style="margin-bottom: 15px; color: var(--text-secondary);">
+                            Toggle packs to automatically buy when affordable. <br>
+                            Slots: <b id="auto_slots_used" class="le-label">0</b> / <b id="auto_slots_total">1</b>
+                        </div>
+                        <div id="auto_packer_buttons" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; max-width: 600px; margin: 0 auto;">
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_pp" onchange="RUNES.toggleAutoPack('pp')"><span>PP</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_tp" onchange="RUNES.toggleAutoPack('tp')"><span>TP</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_rp" onchange="RUNES.toggleAutoPack('rp')"><span>RP</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_ma" onchange="RUNES.toggleAutoPack('ma')"><span>ME</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_as" onchange="RUNES.toggleAutoPack('as')"><span>AP</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_rb" onchange="RUNES.toggleAutoPack('rb')"><span>RB</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_ms" onchange="RUNES.toggleAutoPack('ms')"><span>ST</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_mc" onchange="RUNES.toggleAutoPack('mc')"><span>CL</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_se" onchange="RUNES.toggleAutoPack('se')"><span>SE</span></label>
+                            <label class="auto-check-container"><input type="checkbox" id="auto_pack_check_he" onchange="RUNES.toggleAutoPack('he')"><span>HE</span></label>
                         </div>
                     </div>
+
+                    <div class="layer-divider"></div>
 
                     <div class="upgrades_div" id="le_upgrades_table"></div>
                 </div>
@@ -195,67 +206,92 @@
                     
                     <div class="info-card">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rune Stats Summary</div>
-                        <div id="rune_stats_summary" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; text-align: left;">
+                        <div id="rune_stats_summary" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; text-align: left;">
                             <!-- Injected by main.js -->
                         </div>
                     </div>
 
                     <div class="layer-divider"></div>
 
-                    <div id="rune_packs_container" class="upgrades_div" style="display: flex; flex-direction: column; gap: 20px;">
-                        <div class="info-card">
-                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 10px;">Rune Packs</div>
-                            <div class="settings-grid" style="grid-template-columns: repeat(3, 1fr);">
-                                <div class="settings-card" id="rune_pack_pp">
-                                    <h3 class="pp-label">Prestige Pack</h3>
-                                    <div id="rune_pack_pp_info">Cost: ??? PP | Queue: 0</div>
-                                    <div class="settings-btn-group" style="margin-top: 10px;">
-                                        <button class="settings-btn" onclick="RUNES.openPack('pp')">Open Pack</button>
-                                    </div>
-                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
-                                        <div id="rune_pack_pp_progress" style="width: 0%; height: 100%; background: #008cff;"></div>
-                                    </div>
-                                </div>
-                                <div class="settings-card" id="rune_pack_tp">
-                                    <h3 class="tp-label">Transcension Pack</h3>
-                                    <div id="rune_pack_tp_info">Cost: ??? TP | Queue: 0</div>
-                                    <div class="settings-btn-group" style="margin-top: 10px;">
-                                        <button class="settings-btn" onclick="RUNES.openPack('tp')">Open Pack</button>
-                                    </div>
-                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
-                                        <div id="rune_pack_tp_progress" style="width: 0%; height: 100%; background: #00ff8c;"></div>
-                                    </div>
-                                </div>
-                                <div class="settings-card" id="rune_pack_rp">
-                                    <h3 class="rp-label">Reincarnation Pack</h3>
-                                    <div id="rune_pack_rp_info">Cost: ??? RP | Queue: 0</div>
-                                    <div class="settings-btn-group" style="margin-top: 10px;">
-                                        <button class="settings-btn" onclick="RUNES.openPack('rp')">Open Pack</button>
-                                    </div>
-                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
-                                        <div id="rune_pack_rp_progress" style="width: 0%; height: 100%; background: #8c00ff;"></div>
-                                    </div>
-                                </div>
-                                <div class="settings-card" id="rune_pack_ma">
-                                    <h3 class="me-label">Mastery Pack</h3>
-                                    <div id="rune_pack_ma_info">Cost: ??? ME | Queue: 0</div>
-                                    <div class="settings-btn-group" style="margin-top: 10px;">
-                                        <button class="settings-btn" onclick="RUNES.openPack('ma')">Open Pack</button>
-                                    </div>
-                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
-                                        <div id="rune_pack_ma_progress" style="width: 0%; height: 100%; background: #ff008c;"></div>
-                                    </div>
-                                </div>
-                                <div class="settings-card" id="rune_pack_as">
-                                    <h3 class="as-label">Ascension Pack</h3>
-                                    <div id="rune_pack_as_info">Cost: ??? AP | Queue: 0</div>
-                                    <div class="settings-btn-group" style="margin-top: 10px;">
-                                        <button class="settings-btn" onclick="RUNES.openPack('as')">Open Pack</button>
-                                    </div>
-                                    <div class="progress-bar-container" style="margin-top: 10px; height: 12px; background: #222; border-radius: 6px; overflow: hidden; border: 1px solid #444;">
-                                        <div id="rune_pack_as_progress" style="width: 0%; height: 100%; background: #ff8c00;"></div>
-                                    </div>
-                                </div>
+                    <div id="rune_packs_container" class="rune-pack-grid">
+                        <div class="rune-pack-card" id="rune_pack_pp">
+                            <h3 class="rune-pack-title pp-label">Prestige Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_pp_info">Cost: ??? PP | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('pp')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_pp_progress" class="rune-progress-bar" style="width: 0%; background: #008cff;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_tp">
+                            <h3 class="rune-pack-title tp-label">Transcension Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_tp_info">Cost: ??? TP | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('tp')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_tp_progress" class="rune-progress-bar" style="width: 0%; background: #00ff8c;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_rp">
+                            <h3 class="rune-pack-title rp-label">Reincarnation Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_rp_info">Cost: ??? RP | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('rp')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_rp_progress" class="rune-progress-bar" style="width: 0%; background: #8c00ff;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_ma">
+                            <h3 class="rune-pack-title me-label">Mastery Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_ma_info">Cost: ??? ME | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('ma')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_ma_progress" class="rune-progress-bar" style="width: 0%; background: #ff008c;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_as">
+                            <h3 class="rune-pack-title as-label">Ascension Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_as_info">Cost: ??? AP | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('as')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_as_progress" class="rune-progress-bar" style="width: 0%; background: #ff8c00;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_rb">
+                            <h3 class="rune-pack-title rb-label">Rebirth Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_rb_info">Cost: ??? RB | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('rb')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_rb_progress" class="rune-progress-bar" style="width: 0%; background: #008cff;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_ms">
+                            <h3 class="rune-pack-title st-label">Stone Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_ms_info">Cost: ??? ST | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('ms')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_ms_progress" class="rune-progress-bar" style="width: 0%; background: #8c00ff;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_mc">
+                            <h3 class="rune-pack-title cl-label">Clover Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_mc_info">Cost: ??? CL | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('mc')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_mc_progress" class="rune-progress-bar" style="width: 0%; background: #00ff8c;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_se">
+                            <h3 class="rune-pack-title se-label">Super Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_se_info">Cost: ??? SE | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('se')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_se_progress" class="rune-progress-bar" style="width: 0%; background: #ff008c;"></div>
+                            </div>
+                        </div>
+                        <div class="rune-pack-card" id="rune_pack_he">
+                            <h3 class="rune-pack-title he-label">Hyper Pack</h3>
+                            <div class="rune-pack-info" id="rune_pack_he_info">Cost: ??? HE | Queue: 0</div>
+                            <button class="settings-btn" onclick="RUNES.openPack('he')">Open Pack</button>
+                            <div class="rune-progress-container">
+                                <div id="rune_pack_he_progress" class="rune-progress-bar" style="width: 0%; background: #ff8c00;"></div>
                             </div>
                         </div>
                     </div>

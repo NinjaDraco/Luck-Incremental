@@ -7,6 +7,9 @@ class Element {
 	constructor(el) {
 		this.id = typeof el == "string" ? el : el.id;
 		this.el = document.getElementById(this.id);
+		this.lastHTML = null;
+		this.lastDisplay = null;
+		this.lastClasses = null;
 	}
 
 	get style() {
@@ -14,14 +17,18 @@ class Element {
 	}
 
 	setTxt(txt) {
+		if (this.lastHTML === txt) return;
 		this.el.textContent = txt;
+		this.lastHTML = txt;
 	}
 	static setTxt(id, txt) {
 		new Element(id).setTxt(txt);
 	}
 
 	setHTML(html) {
+		if (this.lastHTML === html) return;
 		this.el.innerHTML = html;
+		this.lastHTML = html;
 	}
 	static setHTML(id, html) {
 		new Element(id).setHTML(html);
@@ -35,7 +42,10 @@ class Element {
 	}
 
 	setDisplay(bool) {
-		this.el.style.display = bool ? "" : "none";
+		let disp = bool ? "" : "none";
+		if (this.lastDisplay === disp) return;
+		this.el.style.display = disp;
+		this.lastDisplay = disp;
 	}
 	static setDisplay(id, bool) {
 		new Element(id).setDisplay(bool);
@@ -63,9 +73,10 @@ class Element {
 	}
 
 	setClasses(data) {
-		this.clearClasses();
-		let list = Object.keys(data).filter(x => data[x]);
-		for (let i = 0; i < list.length; i++) this.addClass(list[i]);
+		let list = Object.keys(data).filter(x => data[x]).sort().join(" ");
+		if (this.lastClasses === list) return;
+		this.el.className = list;
+		this.lastClasses = list;
 	}
 	static setClasses(id, data) {
 		new Element(id).setClasses(data);
@@ -130,7 +141,7 @@ function setupHTML() {
 	for (let x in el.setup) el.setup[x]()
 	
     tmp.el = {}
-	let all = document.getElementsByTagName("*")
+	let all = document.querySelectorAll("[id]")
 	for (let i=0;i<all.length;i++) {
 		let x = all[i]
 		tmp.el[x.id] = new Element(x)

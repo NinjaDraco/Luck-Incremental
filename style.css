@@ -14,6 +14,10 @@
     --me:  #f0c040;
     --le:  #00aaff;
     --ce:  #ff4488;
+    --asce:#6a0dad;
+    --reb: #ff8000;
+    --st:  #ff00ff;
+    --ht:  #00ffff;
 
     --radius: 10px;
     --transition: 0.2s ease;
@@ -65,6 +69,12 @@ body {
     padding: 20px 12px;
     z-index: 10;
     overflow-y: auto;
+    animation: sidebarFade 0.6s ease-out;
+}
+
+@keyframes sidebarFade {
+    from { opacity: 0; transform: translateX(-20px); }
+    to { opacity: 1; transform: translateX(0); }
 }
 
 #sidebar_logo {
@@ -79,6 +89,12 @@ body {
     color: var(--accent);
     letter-spacing: 2px;
     text-shadow: 0 0 20px var(--accent-glow);
+    animation: logoPulse 4s ease-in-out infinite;
+}
+
+@keyframes logoPulse {
+    0%, 100% { text-shadow: 0 0 20px var(--accent-glow); }
+    50% { text-shadow: 0 0 35px var(--accent-glow), 0 0 10px var(--accent); }
 }
 
 .logo-sub {
@@ -225,6 +241,11 @@ body {
 .me-label { color: var(--me); }
 .le-label { color: var(--le); }
 .ce-label { color: var(--ce); }
+.as-label { color: var(--asce); }
+.rb-label { color: var(--reb); }
+.ch-label { color: #f04040; }
+.st-label { color: var(--st); }
+.ht-label { color: var(--ht); }
 
 .layer-divider {
     border: none;
@@ -283,6 +304,18 @@ body {
 }
 .pres_me:hover:not(.locked) { box-shadow: 0 0 30px rgba(240,192,64,0.2); }
 
+.pres_as { border-color: var(--asce); }
+.pres_as:hover:not(.locked) { box-shadow: 0 0 30px rgba(106,13,173,0.3); }
+
+.pres_rb { border-color: var(--reb); }
+.pres_rb:hover:not(.locked) { box-shadow: 0 0 30px rgba(255,128,0,0.3); }
+
+.pres_st { border-color: var(--st); }
+.pres_st:hover:not(.locked) { box-shadow: 0 0 30px rgba(255,0,255,0.3); }
+
+.pres_ht { border-color: var(--ht); }
+.pres_ht:hover:not(.locked) { box-shadow: 0 0 30px rgba(0,255,255,0.3); }
+
 .pres_btn.locked {
     opacity: 0.45;
     cursor: not-allowed;
@@ -325,6 +358,8 @@ body {
 .upgrades_div button:hover:not(.locked) {
     border-color: var(--accent);
     background: rgba(88,166,255,0.06);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
 }
 
 .upgrades_div button.locked {
@@ -447,6 +482,29 @@ body {
     transition: var(--transition);
 }
 
+.upgrades-res-container {
+    margin: 20px 0;
+    padding: 15px;
+    background: rgba(255,255,255,0.02);
+    border-left: 4px solid var(--accent);
+    border-radius: 4px;
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+.res-amount {
+    color: var(--text-primary);
+    font-size: 22px !important;
+    font-weight: 800;
+    margin: 0 8px !important;
+}
+
+.upgs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 15px;
+}
+
 .rarity-entry h4 {
     font-size: 14px;
     font-weight: 800;
@@ -522,7 +580,7 @@ body {
 h1, h2, h3 { margin: 6px 0; }
 h1 { font-size: 28px; }
 h2 { font-size: 20px; font-weight: 700; }
-h3 { display: inline; font-size: 18px; }
+h3 { display: inline; font-size: 18px; color: var(--accent); }
 
 b, strong { color: var(--accent); }
 
@@ -547,6 +605,55 @@ b, strong { color: var(--accent); }
 }
 
 .tab-pane { animation: fadeSlideUp 0.25s ease forwards; }
+
+/* Challenges Grid */
+.challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.chall-btn {
+    padding: 10px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: var(--transition);
+    font-size: 13px;
+    text-align: center;
+    min-height: 80px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.chall-btn:hover:not(.locked) {
+    border-color: var(--accent);
+    background: rgba(88,166,255,0.06);
+}
+
+.chall-btn.chosen {
+    border-color: var(--accent);
+    background: rgba(88,166,255,0.15);
+    box-shadow: 0 0 10px var(--accent-glow);
+}
+
+.chall-btn.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.chall-btn h4 {
+    margin-bottom: 4px;
+}
+
+.chall-btn div {
+    font-size: 11px;
+    opacity: 0.8;
+}
 
 /* ============================================================
    CYBERPUNK ROLL EFFECTS
@@ -605,10 +712,202 @@ b, strong { color: var(--accent); }
     animation: matrix-fall 1.5s linear forwards;
     background: linear-gradient(180deg, transparent, rgba(0,255,0,0.4), transparent);
     -webkit-background-clip: text;
+    background-clip: text;
     background-size: 100% 200%;
 }
 
 .roll-jackpot .roll-result-name {
     display: inline-block;
     animation: jackpot-glitch 1.5s cubic-bezier(.25, .46, .45, .94) forwards;
+}
+
+/* ============================================================
+   WEATHER SYSTEM
+   ============================================================ */
+.weather-banner {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    max-width: 600px;
+    background: rgba(0, 0, 0, 0.85);
+    border: 2px solid #4a90e2;
+    border-radius: 12px;
+    padding: 15px 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 15px rgba(74, 144, 226, 0.3);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    backdrop-filter: blur(10px);
+    animation: weather-float 4s ease-in-out infinite;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+@keyframes weather-float {
+    0%, 100% { transform: translate(-50%, 0px); }
+    50% { transform: translate(-50%, -8px); }
+}
+
+.weather-banner-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.weather-banner-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.weather-banner-name {
+    font-size: 18px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 2px;
+}
+
+.weather-banner-desc {
+    font-size: 13px;
+    color: #ccc;
+    font-weight: 500;
+}
+
+.weather-banner-timer {
+    font-family: 'MainFont', monospace;
+    font-size: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 4px 10px;
+    border-radius: 6px;
+    color: #eee;
+    min-width: 60px;
+    text-align: center;
+}
+
+/* Automation Checkboxes */
+.auto-check-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--card-border);
+    border-radius: 8px;
+    padding: 10px 15px;
+    cursor: pointer;
+    transition: all 0.2s;
+    user-select: none;
+    width: 100%;
+}
+
+.auto-check-container:hover {
+    background: rgba(255,255,255,0.1);
+    border-color: var(--accent);
+}
+
+.auto-check-container input {
+    cursor: pointer;
+    width: 18px;
+    height: 18px;
+    accent-color: #00ff8c;
+}
+
+.auto-check-container span {
+    font-weight: 800;
+    font-size: 14px;
+    letter-spacing: 1px;
+}
+
+.auto-check-container.active {
+    background: rgba(0, 255, 140, 0.15);
+    border-color: #00ff8c;
+    box-shadow: 0 0 15px rgba(0, 255, 140, 0.1);
+}
+
+/* Rune Pack Grid Improvements */
+.rune-pack-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    padding: 10px;
+}
+
+.rune-pack-card {
+    background: var(--card-bg);
+    border: 2px solid var(--card-border);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    transition: var(--transition);
+    position: relative;
+    overflow: hidden;
+}
+
+.rune-pack-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--accent);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.4);
+}
+
+.rune-pack-title {
+    font-size: 18px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin: 0;
+}
+
+.rune-pack-info {
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-secondary);
+}
+
+.rune-progress-container {
+    height: 14px;
+    background: rgba(0,0,0,0.3);
+    border-radius: 7px;
+    border: 1px solid rgba(255,255,255,0.1);
+    overflow: hidden;
+}
+
+.rune-progress-bar {
+    height: 100%;
+    transition: width 0.1s linear;
+}
+
+.upg-btn {
+    padding: 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius);
+    color: var(--text-primary);
+    text-align: left;
+    font-family: inherit;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+    overflow: hidden;
+    backdrop-filter: blur(10px);
+}
+
+.upg-btn:hover:not(.locked) {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,0.05);
+    border-color: var(--accent);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+
+.upg-btn.locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+    filter: grayscale(1);
 }

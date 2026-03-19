@@ -142,6 +142,8 @@ const MAIN = {
             
             x = x.mul(tmp.weatherEff.all)
 
+            x = x.add(RUNES.getEff('rb','add')).mul(RUNES.getEff('rb','mult')).pow(RUNES.getEff('rb','exp'))
+
             return x.floor()
         },
         reset() {
@@ -185,6 +187,7 @@ const MAIN = {
             let t = player.mastery_tier
 
             let x = Math.pow(t*upgradeEffect('st',6,E(1)).toNumber()*(upgradeEffect('se',7,E(1)).toNumber())*(upgradeEffect('he',5,E(1)).toNumber())+1,1/3)
+            x *= upgradeEffect('le',0,E(1)).toNumber()
 
             let y = Decimal.pow(upgradeEffect('st',13).add(10),t-1).mul(t)
 
@@ -208,6 +211,8 @@ const MAIN = {
 
             x = x.mul(tmp.weatherEff.all)
 
+            x = x.add(RUNES.getEff('ms','add')).mul(RUNES.getEff('ms','mult')).pow(RUNES.getEff('ms','exp'))
+
             return x
         },
         cloverGain() {
@@ -216,6 +221,8 @@ const MAIN = {
             let x = E(player.mastery_tier).div(1e12).pow(5).mul(upgradeEffect('cl',4));
 
             x = x.mul(tmp.weatherEff.all)
+
+            x = x.add(RUNES.getEff('mc','add')).mul(RUNES.getEff('mc','mult')).pow(RUNES.getEff('mc','exp'))
 
             return x
         },
@@ -247,6 +254,8 @@ const MAIN = {
             
             x = x.mul(tmp.weatherEff.all)
 
+            x = x.add(RUNES.getEff('se','add')).mul(RUNES.getEff('se','mult')).pow(RUNES.getEff('se','exp'))
+
             return x
         },
     },
@@ -269,9 +278,11 @@ const MAIN = {
         },
         heGain() {
 			if(player.hyper_tier==0) return E(0);
-            let x = E(player.super_tier).mul(player.hyper_tier).pow(Math.log10((player.hyper_tier+1)**3+2));
+            let x = E(player.hyper_tier).pow(2).mul(E(player.super_tier).add(1)).pow(Math.log10((player.hyper_tier+1)**3+2));
             
             x = x.mul(tmp.weatherEff.all)
+
+            x = x.add(RUNES.getEff('he','add')).mul(RUNES.getEff('he','mult')).pow(RUNES.getEff('he','exp'))
 
             return x
         },
@@ -401,49 +412,68 @@ el.update.main = ()=>{
         }
     }
     else if (tab == 7) {
-        // Stats Summary
-        let h = ""
-        const types = ["pp", "tp", "rp", "ma", "as"]
-        const labels = ["Prestige", "Transcension", "Reincarnation", "Mastery", "Ascension"]
-        for (let i = 0; i < 5; i++) {
-            let t = types[i]
-            let label_class = t == 'ma' ? 'me' : (t == 'as' ? 'as' : t)
-            h += `<div class="settings-card">
-                <b class="${label_class}-label">${labels[i]}</b><br>
-                Add: +${RUNES.getEff(t,'add').format()}<br>
-                Mult: x${RUNES.getEff(t,'mult').format()}<br>
-                Exp: ^${RUNES.getEff(t,'exp').format(3)}
-            </div>`
+        // Stats Summary - Cache check
+        let totalItems = Object.values(player.runes.items).reduce((a, b) => a.add(b), E(0)).toString()
+        if (tmp.last_rune_total !== totalItems) {
+            tmp.last_rune_total = totalItems
+            let h = ""
+            const types = ["pp", "tp", "rp", "ma", "as", "rb", "ms", "mc", "se", "he"]
+            const labels = ["Prestige", "Transcension", "Reincarnation", "Mastery", "Ascension", "Rebirth", "Stones", "Clovers", "Super Essence", "Hyper Essence"]
+            for (let i = 0; i < types.length; i++) {
+                let t = types[i]
+                let label_class = t == 'ma' ? 'me' : (t == 'as' ? 'as' : (t == 'rb' ? 'rb' : t))
+                h += `<div class="settings-card" style="padding: 10px; font-size: 13px; border: 1px solid #444; border-radius: 8px;">
+                    <b class="${label_class}-label" style="font-size: 15px;">${labels[i]}</b><br>
+                    <div style="margin-top: 5px;">
+                        <span style="color: #00ff8c;">+${RUNES.getEff(t,'add').format()}</span><br>
+                        <span style="color: #008cff;">x${RUNES.getEff(t,'mult').format()}</span><br>
+                        <span style="color: #8c00ff;">^${RUNES.getEff(t,'exp').format(3)}</span>
+                    </div>
+                </div>`
+            }
+            tmp.el.rune_stats_summary.setHTML(h)
         }
-        tmp.el.rune_stats_summary.setHTML(h)
 
         // Packs
+        const types = ["pp", "tp", "rp", "ma", "as", "rb", "ms", "mc", "se", "he"]
         for (let t of types) {
             let p = player.runes.packs[t]
             let cost = RUNES.getCost(t)
             let res = RUNES.packs[t].res.replace("_", " ").toUpperCase()
             if (t == 'ma') res = "ME"
             if (t == 'as') res = "AP"
-            tmp.el[`rune_pack_${t}_info`].setHTML(`Cost: ${cost.format()} ${res} | Queue: ${p.queue}`)
-            tmp.el[`rune_pack_${t}_progress`].el.style.width = (p.progress.min(1).toNumber() * 100) + "%"
+            if (t == 'rb') res = "RB"
+            
+            // Sub-element caching via Element class's built-in checks
+            tmp.el[`rune_pack_${t}_info`].setHTML(`<b>Cost:</b> ${cost.format()} ${res}<br><b>Queue:</b> ${p.queue}`)
+            
+            let prog = (p.progress.min(1).toNumber() * 100) + "%"
+            let progEl = tmp.el[`rune_pack_${t}_progress`]
+            if (progEl.lastWidth !== prog) {
+                progEl.el.style.width = prog
+                progEl.lastWidth = prog
+            }
         }
 
         // Essence
         tmp.el.rune_essence_display.setHTML(`You have <b class="le-label">${player.luck_essence.format()}</b> Luck Essence`)
 
         // Upgrades
-        h = ""
-        for (let id in RUNE_UPGS) {
-            let u = RUNE_UPGS[id]
-            let lvl = player.runes.upgs[id]
-            let cost = u.cost(lvl)
-            h += `<button class="upg-btn ${player.luck_essence.lt(cost) ? 'locked' : ''}" onclick="RUNES.buyUpg('${id}')">
-                <b>${id.toUpperCase()}</b> [Level ${lvl.format(0)}]<br>
-                ${u.desc}<br>
-                Cost: ${cost.format()} Luck Essence
-            </button>`
+        if (tmp.last_le_val !== player.luck_essence.toString()) {
+            tmp.last_le_val = player.luck_essence.toString()
+            let h = ""
+            for (let id in RUNE_UPGS) {
+                let u = RUNE_UPGS[id]
+                let lvl = player.runes.upgs[id]
+                let cost = u.cost(lvl)
+                h += `<button class="upg-btn ${player.luck_essence.lt(cost) ? 'locked' : ''}" onclick="RUNES.buyUpg('${id}')">
+                    <b>${id.toUpperCase()}</b> [Level ${lvl.format(0)}]<br>
+                    ${u.desc}<br>
+                    Cost: ${cost.format()} Luck Essence
+                </button>`
+            }
+            tmp.el.rune_upgrades_table.setHTML(h)
         }
-        tmp.el.rune_upgrades_table.setHTML(h)
     }
 
     // Luck Multiplier
@@ -451,16 +481,25 @@ el.update.main = ()=>{
 
     // Luck Essence display (tab 5)
     if (tab == 5 && tmp.el.luck_essence_display) {
-        tmp.el.luck_essence_display.setHTML(`
-            You have <b>${player.luck_essence.format()}</b> Luck Essence.<br>
-            Gaining <b>${tmp.leGain.format()}/s</b> from rolls above 100&sigma;.
-        `)
+        if (player.mastery_tier >= 5) {
+            tmp.el.luck_essence_display.setHTML(`
+                You have <b>${player.luck_essence.format()}</b> Luck Essence.<br>
+                Gaining <b>${tmp.leGain.format()}/s</b> from rolls above 100&sigma;.
+            `)
+        } else {
+            tmp.el.luck_essence_display.setHTML(`Reach <b>Mastery Tier 5</b> to unlock Luck Essence.`)
+        }
 
-        const types_auto = ["none", "pp", "tp", "rp", "ma", "as"]
+        let max_slots = upgradeEffect('le',2,0) + 1
+        tmp.el.auto_slots_used.setHTML(player.runes.upgs.auto_pack.length)
+        tmp.el.auto_slots_total.setHTML(max_slots)
+
+        const types_auto = ["pp", "tp", "rp", "ma", "as", "rb", "ms", "mc", "se", "he"]
         for (let i = 0; i < types_auto.length; i++) {
             let t = types_auto[i]
-            let el_btn = tmp.el.auto_packer_buttons.el.children[i]
-            if (el_btn) el_btn.className = "settings-btn " + (player.runes.upgs.auto_pack == t ? "active" : "")
+            let active = player.runes.upgs.auto_pack.includes(t)
+            let el_btn = document.getElementById(`auto_pack_check_${t}`)
+            if (el_btn) el_btn.checked = active
         }
     }
 }

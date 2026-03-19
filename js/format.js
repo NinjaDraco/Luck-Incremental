@@ -295,7 +295,7 @@ function toSuperscript(value) {
 
 function format(ex, acc=2, max=9, type="mixed_sc") {
     ex = E(ex)
-    neg = ex.lt(0)?"-":""
+    let neg = ex.lt(0)?"-":""
     if (ex.mag == Infinity) return neg + 'Infinity'
     if (Number.isNaN(ex.mag)) return neg + 'NaN'
     if (ex.lt(0)) ex = ex.mul(-1)
