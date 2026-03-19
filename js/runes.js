@@ -47,9 +47,7 @@ const RUNES = {
                     let baseRolls = E(1).add(runeBulk.floor())
                     let totalRolls = baseRolls.mul(completions)
 
-                    for (let i = 0; i < totalRolls.toNumber(); i++) {
-                        this.roll(type)
-                    }
+                    this.roll(type, totalRolls)
                     
                     p.progress = p.progress.sub(completions)
                 }
@@ -59,7 +57,7 @@ const RUNES = {
         }
     },
 
-    roll(type) {
+    roll(type, totalCount = E(1)) {
         let runeLuck = player.runes.upgs.luck || E(0)
         let runeClone = player.runes.upgs.clone || E(0)
 
@@ -70,26 +68,32 @@ const RUNES = {
         let wRare = E(1).mul(E(1).add(runeLuck)).toNumber()
 
         let totalWeight = wEasy + wMiddle + wRare
-        let rand = Math.random() * totalWeight
+        
+        let rollLimit = 100
+        let numRolls = totalCount.min(rollLimit).toNumber()
+        let multiplier = totalCount.div(numRolls)
 
-        let res = "easy"
-        if (rand < wRare) res = "rare"
-        else if (rand < wRare + wMiddle) res = "middle"
+        for (let i = 0; i < numRolls; i++) {
+            let rand = Math.random() * totalWeight
 
-        // Rune Clone: Provides a chance (e.g., RuneClone * 10%) to double the result of each roll.
-        let cloneChance = runeClone.mul(0.1).toNumber()
-        let count = (Math.random() < cloneChance) ? 2 : 1
+            let res = "easy"
+            if (rand < wRare) res = "rare"
+            else if (rand < wRare + wMiddle) res = "middle"
 
-        for (let i = 0; i < count; i++) {
+            // Rune Clone: Provides a chance (e.g., RuneClone * 10%) to double the result of each roll.
+            let cloneChance = runeClone.mul(0.1).toNumber()
+            let count = (Math.random() < cloneChance) ? 2 : 1
+            let effectiveCount = multiplier.mul(count)
+
             if (res === "easy") {
                 // Easy: +100 to _add
-                player.runes.items[type + "_add"] = player.runes.items[type + "_add"].add(100)
+                player.runes.items[type + "_add"] = player.runes.items[type + "_add"].add(E(100).mul(effectiveCount))
             } else if (res === "middle") {
                 // Middle: *2 to _mult
-                player.runes.items[type + "_mult"] = player.runes.items[type + "_mult"].mul(2)
+                player.runes.items[type + "_mult"] = player.runes.items[type + "_mult"].mul(Decimal.pow(2, effectiveCount))
             } else if (res === "rare") {
-                // Rare: ^1.001 to _exp (applied as _exp = _exp.mul(1.001))
-                player.runes.items[type + "_exp"] = player.runes.items[type + "_exp"].mul(1.001)
+                // Rare: +0.001 to _exp (additive boost to prevent infinite loops)
+                player.runes.items[type + "_exp"] = player.runes.items[type + "_exp"].add(E(0.001).mul(effectiveCount))
             }
         }
     }
