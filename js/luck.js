@@ -11,6 +11,7 @@ const LUCK = {
     },
     pow() {
         let x = E(1)
+        if (hasUpgrade("ce", 8)) x = x.pow(upgradeEffect("ce", 8))
 
         x = x.mul(upgradeEffect('tp',2)).mul(upgradeEffect('rp',6)).mul(upgradeEffect('es',8)).mul(upgradeEffect('se',8)).mul(upgradeEffect('reb',5))
 

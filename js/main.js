@@ -20,6 +20,7 @@ const MAIN = {
 
             x = x.mul(upgradeEffect('tp',1)).mul(upgradeEffect('rp',1)).mul(upgradeEffect('ap',1)).mul(upgradeEffect('es',1)[1])
             
+            if (hasUpgrade("ce", 1)) x = x.mul(upgradeEffect("ce", 1))
             x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('pp','add')).mul(RUNES.getEff('pp','mult')).pow(RUNES.getEff('pp','exp'))
@@ -52,6 +53,7 @@ const MAIN = {
             x = x.mul(upgradeEffect('rp',2)).mul(upgradeEffect('ap',2)).mul(upgradeEffect('es',3)[1])
 
             x = x.mul(tmp.weatherEff.all)
+            if (hasUpgrade("ce", 1)) x = x.mul(upgradeEffect("ce", 1))
 
             x = x.add(RUNES.getEff('tp','add')).mul(RUNES.getEff('tp','mult')).pow(RUNES.getEff('tp','exp'))
 
@@ -86,6 +88,7 @@ const MAIN = {
             x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('rp','add')).mul(RUNES.getEff('rp','mult')).pow(RUNES.getEff('rp','exp'))
+            if (hasUpgrade("ce", 1)) x = x.mul(upgradeEffect("ce", 1))
 
             return x.floor()
         },
@@ -117,6 +120,7 @@ const MAIN = {
             x = x.mul(tmp.weatherEff.all)
 
             x = x.add(RUNES.getEff('as','add')).mul(RUNES.getEff('as','mult')).pow(RUNES.getEff('as','exp'))
+            if (hasUpgrade("ce", 1)) x = x.mul(upgradeEffect("ce", 1))
 
             return x.floor()
         },
@@ -144,6 +148,7 @@ const MAIN = {
 
             x = x.add(RUNES.getEff('rb','add')).mul(RUNES.getEff('rb','mult')).pow(RUNES.getEff('rb','exp'))
 
+            if (hasUpgrade("ce", 1)) x = x.mul(upgradeEffect("ce", 1))
             return x.floor()
         },
         reset() {
@@ -174,6 +179,7 @@ const MAIN = {
         },
         reset() {
             if (player.max_rarity.gte(tmp.mTierReq)) {
+            if (hasUpgrade("ce", 5)) x *= upgradeEffect("ce", 5).toNumber()
                 player.mastery_tier++
                 this.doReset()
             }
@@ -202,6 +208,7 @@ const MAIN = {
 
             x = x.add(RUNES.getEff('ma','add')).mul(RUNES.getEff('ma','mult')).pow(RUNES.getEff('ma','exp'))
 
+            if (hasUpgrade("ce", 2)) x = x.mul(upgradeEffect("ce", 2))
             return x
         },
         stoneGain() {
@@ -214,6 +221,7 @@ const MAIN = {
             x = x.add(RUNES.getEff('ms','add')).mul(RUNES.getEff('ms','mult')).pow(RUNES.getEff('ms','exp'))
 
             return x
+            if (hasUpgrade("ce", 2)) x = x.mul(upgradeEffect("ce", 2))
         },
         cloverGain() {
 			if(!hasUpgrade('he',9)) return E(0);
@@ -228,6 +236,7 @@ const MAIN = {
         },
     },
     superT: {
+            if (hasUpgrade("ce", 2)) x = x.mul(upgradeEffect("ce", 2))
         req() {
 			if(player.super_tier>=8) return player.super_tier**3;
 			return 100+50*player.super_tier;
@@ -235,8 +244,9 @@ const MAIN = {
         reset() {
             if (player.mastery_tier >= tmp.sTierReq) {
                 player.super_tier++
-                this.doReset()
-            }
+            let req = player.super_tier>=8 ? player.super_tier**3 : 100+50*player.super_tier;
+            if (hasUpgrade("ce", 6)) req *= upgradeEffect("ce", 6).toNumber();
+            return req;
         },
         doReset() {
             player.mastery_tier = 0
@@ -268,8 +278,9 @@ const MAIN = {
             if (player.super_tier >= tmp.hTierReq) {
                 player.hyper_tier++
                 this.doReset()
-            }
-        },
+            let req = player.hyper_tier>=8 ? player.hyper_tier**3 : 100+50*player.hyper_tier;
+            if (hasUpgrade("ce", 7)) req *= upgradeEffect("ce", 7).toNumber();
+            return req;
         doReset() {
             player.super_tier = 0
             player.super_essence = E(0)
@@ -288,6 +299,71 @@ const MAIN = {
         },
     },
 }
+
+    ce: {
+        gain() {
+            if (player.hyper_tier < 200) return E(0)
+            let x = E(player.hyper_tier).sub(199).pow(2)
+            if (hasUpgrade("ce", 3)) x = x.mul(upgradeEffect("ce", 3))
+            return x.floor()
+        },
+        reset() {
+            if (player.hyper_tier >= 200) {
+                player.celestial_essence = player.celestial_essence.add(this.gain())
+                this.doReset()
+            }
+        },
+        doReset() {
+            player.max_rarity = E(0)
+            player.pp = E(0)
+            player.tp = E(0)
+            player.rp = E(0)
+            player.ap = E(0)
+            player.reb = E(0)
+            player.mastery_essence = E(0)
+            player.mastery_stone = E(0)
+            player.mastery_clover = E(0)
+            player.super_essence = E(0)
+            player.hyper_essence = E(0)
+
+            let keepMTier = hasUpgrade("ce", 4) ? Math.floor(player.mastery_tier * 0.05) : 0
+            let keepSTier = hasUpgrade("ce", 4) ? Math.floor(player.super_tier * 0.05) : 0
+            let keepHTier = hasUpgrade("ce", 4) ? Math.floor(player.hyper_tier * 0.05) : 0
+
+            player.mastery_tier = keepMTier
+            player.super_tier = keepSTier
+            player.hyper_tier = keepHTier
+
+            let keep = {
+                es: new Array(16).fill(E(0)),
+                st: new Array(7).fill(E(0)),
+                se: new Array(15).fill(E(0)),
+                he: new Array(9).fill(E(0))
+            }
+
+            // Re-apply specific automations
+            if (player.upgrade.es[1].gt(0)) keep.es[1] = E(1) // PU
+            if (player.upgrade.es[3].gt(0)) keep.es[3] = E(1) // TU
+            if (player.upgrade.es[7].gt(0)) keep.es[7] = E(1) // RU
+            if (player.upgrade.es[14].gt(0)) keep.es[14] = E(1) // AU
+            if (player.upgrade.st[3].gt(0)) keep.st[3] = E(1) // ME Upgrades
+            if (player.upgrade.st[5].gt(0)) keep.st[5] = E(1) // RB Upgrades
+            if (player.upgrade.se[4].gt(0)) keep.se[4] = E(1) // MS Upgrades
+            if (player.upgrade.he[4].gt(0)) keep.he[4] = E(1) // SU Upgrades
+
+            let keepCe = player.upgrade.ce
+            let keepLe = player.upgrade.le
+
+            for (let id in UPGRADES) {
+                if (id == "ce") player.upgrade.ce = keepCe
+                else if (id == "le") player.upgrade.le = keepLe
+                else if (keep[id]) player.upgrade[id] = keep[id]
+                else player.upgrade[id] = new Array(UPGRADES[id].ctn.length).fill(E(0))
+            }
+
+            resetTemp()
+        }
+    },
 
 const RUNE_UPGS = {
     speed: {
@@ -464,6 +540,7 @@ el.update.main = ()=>{
         tmp.el.rune_essence_display.setHTML(`You have <b class="le-label">${player.luck_essence.format()}</b> Luck Essence`)
 
         // Upgrades
+    tmp.ceGain = MAIN.ce.gain()
         if (tmp.last_le_val !== player.luck_essence.toString()) {
             tmp.last_le_val = player.luck_essence.toString()
             let h = ""
@@ -482,6 +559,24 @@ el.update.main = ()=>{
     }
 
     // Luck Multiplier
+    // Celestial logic
+    if (tab == 6 && tmp.el.celestial_display) {
+        let req = 200
+        if (player.hyper_tier >= req) {
+            tmp.el.celestial_btn.setDisplay(true)
+            tmp.el.celestial_btn.setClasses({locked: tmp.ceGain.lt(1), pres_btn: true, pres_ce: true})
+            tmp.el.celestial_btn.setHTML(`
+                Reset for ${tmp.ceGain.format(0).bold()} Celestial Essence
+            `)
+            tmp.el.celestial_display.setHTML(`
+                You have <b>${player.celestial_essence.format(0)}</b> Celestial Essence.
+            `)
+        } else {
+            tmp.el.celestial_btn.setDisplay(false)
+            tmp.el.celestial_display.setHTML(`This layer unlocks at <b>Hyper Tier ${format(req, 0)}</b>.`)
+        }
+    }
+
     tmp.el.luck_mult.setHTML("Your luck multiplier: "+formatMult(tmp.luckMult))
 
     // Luck Essence display (tab 5)
