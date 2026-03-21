@@ -65,8 +65,17 @@ function sumBases(a,n,m=1) {
     return Decimal.pow(a,n+1).sub(1).div(a-1).mul(m)
 }
 
+function secureRandom() {
+    const array = new Uint32Array(2);
+    window.crypto.getRandomValues(array);
+    // Use 53 bits of randomness for a float between [0, 1)
+    // Same precision as Math.random()
+    const mantissa = (array[0] & 0x1FFFFF) * 0x100000000 + array[1];
+    return mantissa / 0x20000000000000;
+}
+
 function randint(min, max) {
-    return Math.floor(Math.random() * (max - min + 1) ) + min;
+    return Math.floor(secureRandom() * (max - min + 1) ) + min;
 }
 
 function getPlayerData() {
@@ -162,7 +171,6 @@ function loadPlayer(load) {
     const DATA = getPlayerData()
     player = deepNaN(load, DATA)
     player = deepUndefinedAndDecimal(player, DATA)
-    convertStringToDecimal()
 }
 
 function deepNaN(obj, data) {
@@ -190,10 +198,6 @@ function deepUndefinedAndDecimal(obj, data) {
         }
     }
     return obj
-}
-
-function convertStringToDecimal() {
-    
 }
 
 function cannotSave() { return false }

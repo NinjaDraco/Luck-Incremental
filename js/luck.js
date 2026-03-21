@@ -19,6 +19,7 @@ const LUCK = {
     generate() {
         let r;
         do {
+            r = Decimal.pow(secureRandom(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
             r = Decimal.pow(Math.random(),-1).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
         } while(Decimal.isNaN(r))
             
@@ -33,6 +34,7 @@ const LUCK = {
         
         let r;
         do {
+            r = Decimal.pow(E(1).sub(Decimal.pow(secureRandom(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
             r = Decimal.pow(E(1).sub(Decimal.pow(Math.random(),step.pow(-1))),-1).mul(mult).pow(tmp.luckPow).mul(tmp.luckMult).log(tmp.luckBase).scale(tmp.raritySS,2,0,true)
         } while(Decimal.isNaN(r))
             
@@ -185,14 +187,24 @@ el.update.luck = () => {
         if (!tmp.luck_cache) tmp.luck_cache = []
         for (let i = 0; i < 8; i++) {
             let m = mr.add(i)
-            if (tmp.luck_cache[i] && tmp.luck_cache[i].eq(m)) continue
-            tmp.luck_cache[i] = m
 
             let lc = tmp.el['luck_ctn'+i]
             lc.setDisplay(i == 0 || m.lt(9e15))
             if (i > 0 && m.gte(9e15)) continue
 
-            lc.setHTML(`<h4>${getRarityName(m)}</h4> 1 / ${getRarityChance(m).format()}`)
+            let chanceStr = getRarityChance(m).format()
+            let m_eq = tmp.luck_cache[i] && tmp.luck_cache[i].eq(m)
+            let c_eq = lc.last_chance_str === chanceStr
+
+            if (m_eq && c_eq) continue
+
+            if (!m_eq) {
+                lc.last_name_html = `<h4>${getRarityName(m)}</h4>`
+            }
+
+            tmp.luck_cache[i] = m
+            lc.last_chance_str = chanceStr
+            lc.setHTML(lc.last_name_html + ' 1 / ' + chanceStr)
         }
     }
 

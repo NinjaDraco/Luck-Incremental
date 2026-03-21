@@ -56,30 +56,30 @@ const WEATHER = {
         }
 
         // Trigger new weather (capped chance per tick)
-        if (Math.random() < Math.min(dt * 0.05, 0.5)) { // Max 50% chance per tick
+        if (secureRandom() < Math.min(dt * 0.05, 0.5)) { // Max 50% chance per tick
             this.trigger()
         }
     },
     trigger() {
         if (!player.weather) player.weather = []
         
-        let weather_count_rng = Math.random()
+        let weather_count_rng = secureRandom()
         let max_weathers = 1
         if (weather_count_rng < 0.05) max_weathers = 3
         else if (weather_count_rng < 0.2) max_weathers = 2
 
         if (player.weather.length >= max_weathers) return
 
-        let rng = Math.random() * 5 + 1 // higher rng give higher stats multi
-        let duration = Math.random() * 29 + 1 // 1 to 30 second
+        let rng = secureRandom() * 5 + 1 // higher rng give higher stats multi
+        let duration = secureRandom() * 29 + 1 // 1 to 30 second
 
         let keys = Object.keys(this.types).filter(k => k !== 'none')
-        let id = keys[Math.floor(Math.random() * keys.length)]
+        let id = keys[Math.floor(secureRandom() * keys.length)]
 
         // Check if rare
-        if (this.types[id].rare && Math.random() > 0.1) {
-             id = keys[Math.floor(Math.random() * keys.length)] // reroll if rare
-             if (this.types[id].rare && Math.random() > 0.1) id = 'rain' // fallback
+        if (this.types[id].rare && secureRandom() > 0.1) {
+             id = keys[Math.floor(secureRandom() * keys.length)] // reroll if rare
+             if (this.types[id].rare && secureRandom() > 0.1) id = 'rain' // fallback
         }
 
         // Avoid duplicates
