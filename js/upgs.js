@@ -1158,6 +1158,72 @@ const UPGRADES = {
             },
         ],
     },
+    ce: {
+        tab: 6,
+        res: ["Celestial Essence",()=>[player,'celestial_essence'],"Celestial Essence"],
+        unl: ()=>player.celestial_essence.gt(0),
+        ctn: [
+            {
+                desc: () => `Gain a massive flat boost to Luck based on Celestial Essence.`,
+                cost: i => Decimal.pow(10, i).mul(1),
+                bulk: i => i.div(1).log(10),
+                effect(i) { return E(player.celestial_essence).add(1).pow(i).pow(2) },
+                effDesc: x => "x"+format(x)
+            },{
+                desc: () => `Increase PP, TP, RP, AP, and RB gains based on Celestial Essence.`,
+                cost: i => Decimal.pow(25, i).mul(2),
+                bulk: i => i.div(2).log(25),
+                effect(i) { return E(player.celestial_essence).add(1).pow(i.mul(1.5)) },
+                effDesc: x => "x"+format(x)
+            },{
+                desc: () => `Increase ME, Stone, Clover, Super Essence, and Hyper Essence gains based on Celestial Essence.`,
+                cost: i => Decimal.pow(100, i).mul(5),
+                bulk: i => i.div(5).log(100),
+                effect(i) { return E(player.celestial_essence).add(1).pow(i.mul(0.5)) },
+                effDesc: x => "x"+format(x)
+            },{
+                desc: () => `Boost Celestial Essence gain.`,
+                cost: i => Decimal.pow(1000, i).mul(10),
+                bulk: i => i.div(10).log(1000),
+                effect(i) { return E(2).pow(i) },
+                effDesc: x => "x"+format(x)
+            },{
+                oneTime: true,
+                desc: () => `Keep 5% of Mastery, Super, and Hyper Tiers on Celestial Reset.`,
+                cost: i => E(50),
+            },{
+                desc: () => `Reduce the scaling of Mastery Tier requirement.`,
+                cost: i => Decimal.pow(1e4, i).mul(100),
+                bulk: i => i.div(100).log(1e4),
+                effect(i) { return E(0.98).pow(i) },
+                effDesc: x => formatPercent(E(1).sub(x))+" weaker"
+            },{
+                desc: () => `Reduce the scaling of Super Tier requirement.`,
+                cost: i => Decimal.pow(1e5, i).mul(200),
+                bulk: i => i.div(200).log(1e5),
+                effect(i) { return E(0.98).pow(i) },
+                effDesc: x => formatPercent(E(1).sub(x))+" weaker"
+            },{
+                desc: () => `Reduce the scaling of Hyper Tier requirement.`,
+                cost: i => Decimal.pow(1e6, i).mul(500),
+                bulk: i => i.div(500).log(1e6),
+                effect(i) { return E(0.98).pow(i) },
+                effDesc: x => formatPercent(E(1).sub(x))+" weaker"
+            },{
+                desc: () => `Exponentially boost base Luck.`,
+                cost: i => Decimal.pow(1e10, i).mul(1000),
+                bulk: i => i.div(1000).log(1e10),
+                effect(i) { return i.add(1).pow(2) },
+                effDesc: x => "^"+format(x)
+            },{
+                desc: () => `Massively boost Rune Luck and Rarity weights.`,
+                cost: i => Decimal.pow(1e15, i).mul(10000),
+                bulk: i => i.div(10000).log(1e15),
+                effect(i) { return E(player.celestial_essence).add(1).pow(i.mul(2)) },
+                effDesc: x => "x"+format(x)
+            }
+        ]
+    },
     le: {
         tab: 5,
         res: ["Luck Essence",()=>[player,'luck_essence'],"Luck Essence"],

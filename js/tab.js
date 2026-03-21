@@ -8,7 +8,7 @@ const TABS = {
         if (i === 3) return player.mastery_tier >= 100 || player.super_tier > 0 // Super Tier
         if (i === 4) return player.super_tier >= 100 || player.hyper_tier > 0  // Hyper Tier
         if (i === 5) return player.mastery_tier >= 5  // Luck Essence tab
-        if (i === 6) return player.mastery_tier >= 200 // Celestial tab
+        if (i === 6) return player.hyper_tier >= 200 // Celestial tab
         if (i === 7) return player.pTimes > 0        // Rune tab
         return false
     },

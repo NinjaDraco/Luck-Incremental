@@ -80,13 +80,13 @@ const RUNES = {
             if (player[res].gte(cost)) this.openPack(target)
         }
 
-        // Opening Time: 30 / (1 + RuneSpeed) seconds.
+        // Opening Time: 30 / (1 + RuneSpeed) milliseconds. (Was seconds, making it 1000x slower)
         let time = E(30).div(E(1).add(runeSpeed)).mul(quantum).max(0.1)
 
         for (let type in this.packs) {
             let p = player.runes.packs[type]
             if (p.queue > 0) {
-                let added = E(diff).div(time)
+                let added = E(diff).mul(1000).div(time)
                 p.progress = p.progress.add(added)
                 
                 if (p.progress.gte(1)) {
@@ -114,8 +114,13 @@ const RUNES = {
 
         // Rarity Weights (Base): Easy: 100, Middle: 10, Rare: 1
         let wEasy = 100
-        let wMiddle = E(10).mul(E(1).add(runeLuck)).toNumber()
-        let wRare = E(1).mul(E(1).add(runeLuck)).toNumber()
+        let wMiddle = E(10).mul(E(1).add(runeLuck))
+        if (hasUpgrade('ce', 9)) wMiddle = wMiddle.mul(upgradeEffect('ce', 9))
+        wMiddle = wMiddle.toNumber()
+
+        let wRare = E(1).mul(E(1).add(runeLuck))
+        if (hasUpgrade('ce', 9)) wRare = wRare.mul(upgradeEffect('ce', 9))
+        wRare = wRare.toNumber()
 
         let totalWeight = wEasy + wMiddle + wRare
         

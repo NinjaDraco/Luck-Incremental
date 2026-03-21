@@ -113,6 +113,8 @@ function getPlayerData() {
         hyper_tier: 0,
         hyper_essence: E(0),
 
+        celestial_essence: E(0),
+
         runes: {
             unl: false,
             packs: {
@@ -280,12 +282,22 @@ function loadGame(start=true, gotNaN=false) {
     resetTemp()
     setupHTML()
     
+    if (tmp.intervals) {
+        clearInterval(tmp.intervals.save)
+        clearInterval(tmp.intervals.loop)
+        clearInterval(tmp.intervals.ui)
+        clearInterval(tmp.intervals.nan)
+    }
+
     if (start) {
         for (let x = 0; x < 50; x++) updateTemp()
-        setInterval(save,60000)
-        setInterval(loop, 1000/FPS)
-        setInterval(uiLoop, 1000/15)
-        setInterval(checkNaN,1000)
+
+        tmp.intervals = {
+            save: setInterval(save, 60000),
+            loop: setInterval(loop, 1000/FPS),
+            ui: setInterval(uiLoop, 1000/15),
+            nan: setInterval(checkNaN, 1000)
+        }
 
         setTimeout(
             ()=>{
